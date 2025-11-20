@@ -5,9 +5,11 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
+  const router = useRouter();
 
   const goToStepTwo = () => setStep(2);
   const goToStepOne = () => setStep(1);
@@ -29,6 +31,27 @@ export default function SignUp() {
     ),
   });
 
+  const [message, setMessage] = useState("");
+
+  const createUser = async (email, password) => {
+    console.log(email, password);
+    try {
+      const response = await axios.post(
+        "http://localhost:1000/authentication/sign-up",
+        {
+          email: email,
+          password: password,
+        }
+      );
+      router.push("/login");
+      setMessage(response.data.message || "amjilttai bolloo");
+      alert("amjilttai bolloo");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "amjiltgui bolloo");
+      alert("amjiltgui bolloo");
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -36,30 +59,13 @@ export default function SignUp() {
       confirmPassword: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      const { email, password } = values;
+      await createUser(email, password);
       alert(JSON.stringify(values, null, 2));
     },
   });
-  function SignUp() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [message, setMessage] = useState("");
 
-    const create = async () => {
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/authentication/sign-up",
-          {
-            email,
-            password,
-          }
-        );
-        setMessage(response.data.message || "amjilttai bolloo");
-      } catch (error) {
-        setMessage(error.response?.data?.message || "amjiltgui bolloo");
-      }
-    };
-  }
   return (
     <div>
       {step === 1 && <SignUpStepOne onNext={goToStepTwo} formik={formik} />}

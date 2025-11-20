@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 const SignUpStepOne = ({ onNext, formik }) => {
   const router = useRouter();
 
-  const { values, handleChange, handleBlur, errors, touched } = formik;
+  const { values, handleChange, handleBlur, errors, touched, handleSubmit } =
+    formik;
   console.log("values", values);
 
   // const handleNextStep = () => {
@@ -59,18 +60,22 @@ const SignUpStepOne = ({ onNext, formik }) => {
           )}
         </div>
 
-        <Badge
+        <Button
           className={`oklch(55.2% 0.016 285.938) w-[416px] h-[36px] text-sm ${
             !errors.email
               ? "bg-[#18181B] text-white"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           } `}
           variant="secondary"
-          onClick={onNext}
+          onClick={() => {
+            if (!errors.email && values.email) {
+              onNext();
+            }
+          }}
           disabled={errors.email || !values.email}
         >
           Let's Go
-        </Badge>
+        </Button>
         <div className="flex flex-row pt-[24px] gap-[5px]">
           <p className="pl-[85px] text-base">Already have an account?</p>
           <p className="text-base  text-sky-400"> Log in </p>

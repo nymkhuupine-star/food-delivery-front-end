@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { useRouter } from "next/navigation";
-
 const SignUpStepTwo = ({ onBack, formik }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const { values, handleChange, handleBlur, errors, touched } = formik;
+  const handleClick = () => {
+    create(formik.values, setMessage);
+  };
+
+  const { values, handleChange, handleBlur, errors, touched, handleSubmit } =
+    formik;
   return (
     <div className=" flex flex-row justify-center items-center gap-[48px] h-screen">
       <div className="flex flex-col">
@@ -87,16 +91,17 @@ const SignUpStepTwo = ({ onBack, formik }) => {
           <label htmlFor="terms">Show password</label>
         </div>
 
-        <Badge
+        <Button
           className={`oklch(55.2% 0.016 285.938) w-[416px] h-[36px] text-sm ${
             !errors.confirmPassword
               ? "bg-[#18181B] text-white"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           } `}
           variant="secondary"
+          onClick={handleSubmit}
         >
           Let's Go
-        </Badge>
+        </Button>
         <div className="flex flex-row pt-[24px] gap-[5px]">
           <p className="pl-[85px] text-base">Already have an account?</p>
           <p className="text-base  text-sky-400"> Log in </p>
