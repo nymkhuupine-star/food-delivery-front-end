@@ -1,18 +1,20 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import AddCard from "./AddNewFood";
 
-export default function AddNewCategory() {
+
+export default function AddNewCategory({ categories }) {
   return (
-    <div className="bg-white w-[460px] h-[272px] rounded-xl flex flex-col">
-      <p>Category name</p>
-      <Input type="name" placeholder="Type category name..." />
+    <div className="h-[582px] bg-white w-[1171px] p-6 rounded-md ml-[24px]">
+      {categories.map((cat, index) => (
+        <div key={index} className="mb-6">
+          <p className="pb-[16px]">{cat}</p>
 
-      <Button className="bg-black h-[40px] w-[123px] rounded-4xl">
-        {" "}
-        <p> Add category</p>
-      </Button>
+          <div className="grid grid-cols-4 gap-3">
+            <AddCard />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

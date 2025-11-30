@@ -2,6 +2,7 @@ import * as React from "react";
 const TruckIcon = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 20 15"
     width={20}
     height={15}
     fill="none"
@@ -16,3 +17,6 @@ const TruckIcon = (props) => (
   </svg>
 );
 export default TruckIcon;
+
+
+
