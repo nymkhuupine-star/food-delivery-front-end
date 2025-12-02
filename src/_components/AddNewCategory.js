@@ -1,17 +1,16 @@
 "use client";
 
-import AddCard from "./AddNewFood";
+import AddFoodCard from "./AddFoodCard";
 
-
-export default function AddNewCategory({ categories }) {
+export default function AddNewCategory({ categories, onOpenDishDialog }) {
   return (
-    <div className="h-[582px] bg-white w-[1171px] p-6 rounded-md ml-[24px]">
+    <div className="bg-white w-[1171px] p-6 rounded-md  mt-[24px] mb-[24px] ">
       {categories.map((cat, index) => (
         <div key={index} className="mb-6">
-          <p className="pb-[16px]">{cat}</p>
+          <p className="pb-[16px]">{cat.categoryName}</p>
 
           <div className="grid grid-cols-4 gap-3">
-            <AddCard />
+            <AddFoodCard category={cat} onOpen={onOpenDishDialog} />
           </div>
         </div>
       ))}

@@ -5,50 +5,51 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import axios from "axios";
+import AddNewCategory from "./AddNewCategory";
 
 export default function DishesCategory({ formik }) {
   const { values, handleChange, handleBlur, handleSubmit, resetForm } = formik;
 
-  const [categories, setCategories] = useState([
-    "All dishes",
-    "Appetizers",
-    "Salads",
-    "Pizzas",
-    "Lunch favorites",
-    "Main dishes",
-    "Fish & Sea foods",
-    "Brunch",
-    "Side dish",
-    "Desserts",
-    "Beverages",
-  ]);
-
-  const [newCategory, setNewCategory] = useState("");
+  const [categories, setCategories] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newCategory, setNewCategory] = useState([]);
 
-  const handleAddCategory = () => {
+  const getCategory = async () => {
+    try {
+      const result = await axios.get("http://localhost:1000/category");
+      setCategories(result.data);
+    } catch (err) {
+      toast.error("Failed to load category");
+    }
+  };
+  useEffect(() => {
+    getCategory();
+  }, []);
+
+  const handleAddCategory = async () => {
+    handleSubmit(values);
     const name = values.categoryName.trim();
-    if (name !== "") {
-      setCategories([...categories, name]);
-      handleSubmit(values);
 
-      toast.success("New Category is being added to the menu", {
-        className: "bg-black text-white",
-      });
-      // resetForm();
-      setIsDialogOpen(false);
+    if (name !== "") {
+      setCategories([...categories, { name }]);
+      console.log(name, "asdfasdfasdfasd");
     } else {
       toast.error("Category name cannot be empty!");
     }
   };
 
-  // const handleKeyPress = (e) => {
-  //   if (e.key === "Enter") {
-  //     handleAddCategory();
-  //   }
-  // };
+  const handleDeleteCategory = async (id) => {
+    try {
+      await axios.delete(`http://localhost:1000/category/${id}`);
+      toast.success("success delete category");
+      getCategory();
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
+  };
 
   return (
     <div className="pt-[84px] flex flex-col pl-[24px]  ">
@@ -56,14 +57,24 @@ export default function DishesCategory({ formik }) {
         <p className="text-xl"> Dishes category</p>
         <div className="flex flex-wrap gap-2 mt-4 ">
           {categories.map((category, index) => (
-            <Button
+            <div
               key={index}
-              className="bg-white h-[36px] p-[8px_16px] text-black border border-[#E4E4E7] rounded-full"
+              className="bg-white h-[36px] px-4 text-black border border-[#E4E4E7] rounded-full relative flex items-center"
             >
-              {category}
-              <Badge>1</Badge>
-            </Button>
+              <button
+                onClick={() => handleDeleteCategory(category._id)}
+                className="absolute top-[-5px] right-[-5px] w-5 h-5 flex items-center justify-center bg-white rounded-full border border-gray-300"
+              >
+                <CancelIcon className="w-3 h-3" />
+              </button>
+
+              <div className="flex items-center justify-center w-full">
+                <span className="mx-2">{category.categoryName}</span>
+                <Badge className="ml-2">1</Badge>
+              </div>
+            </div>
           ))}
+
           <Button
             className="bg-red-500 w-[36px] h-[36px] rounded-3xl flex justify-center items-center "
             onClick={() => setIsDialogOpen(true)}
@@ -73,43 +84,50 @@ export default function DishesCategory({ formik }) {
         </div>
 
         {isDialogOpen && (
-          <div className="fixed bg-white bg-opacity-50 flex items-center justify-center z-50">
-            <div className="w-[412px] h-[224px] bg-white rounded-lg p-5 w-96 shadow-xl">
-              <div className="flex flex-row gap-[160px]">
-                <h3 className="text-xl font-bold ">Add New Category</h3>
-                <button
-                  onClick={() => {
-                    setIsDialogOpen(false);
-                    setNewCategory("");
-                  }}
-                  className="px-3 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
-                >
-                  <CancelIcon />
-                </button>
-              </div>
-              <h5 className="text-sm pt-[30px] pb-[8px] ">Category name </h5>
+          <form onSubmit={handleAddCategory}>
+            <div className="fixed bg-white bg-opacity-50 flex items-center justify-center z-50">
+              <div className="w-[412px] h-[224px] bg-white rounded-lg p-5 w-96 shadow-xl">
+                <div className="flex flex-row gap-[160px]">
+                  <h3 className="text-xl font-bold ">Add New Category</h3>
+                  <button
+                    onClick={() => {
+                      setIsDialogOpen(false);
+                      setNewCategory("");
+                    }}
+                    className="px-3 py-3 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors"
+                  >
+                    <CancelIcon />
+                  </button>
+                </div>
+                <h5 className="text-sm pt-[30px] pb-[8px] ">Category name </h5>
 
-              <Input
-                name="categoryName"
-                value={values.categoryName}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                placeholder="Enter category name..."
-                className="w-full px-4 py-2 border border-neutral-400 rounded-lg  mb-4"
-                autoFocus
-              />
+                <Input
+                  type="text"
+                  name="categoryName"
+                  value={values.categoryName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Enter category name..."
+                  className="w-full px-4 py-2 border border-neutral-400 rounded-lg  mb-4"
+                  autoFocus
+                />
 
-              <div className="flex gap-2 justify-end">
-                <button
-                  onClick={handleAddCategory}
-                  className="px-4 py-2 bg-black text-white rounded-lg "
-                >
-                  Add category
-                </button>
+                <div className="flex gap-2 justify-end">
+                  <button
+                    onClick={handleAddCategory}
+                    type="submit"
+                    className="px-4 py-2 bg-black text-white rounded-lg "
+                  >
+                    Add category
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          </form>
         )}
+      </div>
+      <div className="space-y-6">
+        <AddNewCategory categories={categories} />
       </div>
     </div>
   );
