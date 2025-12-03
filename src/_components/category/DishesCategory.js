@@ -85,7 +85,7 @@ export default function DishesCategory({ formik }) {
 
         {isDialogOpen && (
           <form onSubmit={handleAddCategory}>
-            <div className="fixed bg-white bg-opacity-50 flex items-center justify-center z-50">
+            <div className="fixed  inset-0   flex items-center justify-center z-50">
               <div className="w-[412px] h-[224px] bg-white rounded-lg p-5 w-96 shadow-xl">
                 <div className="flex flex-row gap-[160px]">
                   <h3 className="text-xl font-bold ">Add New Category</h3>
