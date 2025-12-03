@@ -1,6 +1,6 @@
 "use client";
-import SignUpStepOne from "@/_components/SignUpStepOne";
-import SignUpStepTwo from "@/_components/SignUpStepTwo";
+import SignUpStepOne from "@/_components/signUp/SignUpStepOne";
+import SignUpStepTwo from "@/_components/signUp/SignUpStepTwo";
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";

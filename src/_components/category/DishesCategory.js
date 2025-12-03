@@ -8,7 +8,8 @@ import { PlusIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import axios from "axios";
-import AddNewCategory from "./AddNewCategory";
+import AddNewCategory from "../food/FoodList";
+import FoodList from "../food/FoodList";
 
 export default function DishesCategory({ formik }) {
   const { values, handleChange, handleBlur, handleSubmit, resetForm } = formik;
@@ -35,7 +36,6 @@ export default function DishesCategory({ formik }) {
 
     if (name !== "") {
       setCategories([...categories, { name }]);
-      console.log(name, "asdfasdfasdfasd");
     } else {
       toast.error("Category name cannot be empty!");
     }
@@ -115,7 +115,6 @@ export default function DishesCategory({ formik }) {
                 <div className="flex gap-2 justify-end">
                   <button
                     onClick={handleAddCategory}
-                    type="submit"
                     className="px-4 py-2 bg-black text-white rounded-lg "
                   >
                     Add category
@@ -127,7 +126,7 @@ export default function DishesCategory({ formik }) {
         )}
       </div>
       <div className="space-y-6">
-        <AddNewCategory categories={categories} />
+        <FoodList categories={categories} />
       </div>
     </div>
   );

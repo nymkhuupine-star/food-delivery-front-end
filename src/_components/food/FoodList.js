@@ -2,7 +2,7 @@
 
 import AddFoodCard from "./AddFoodCard";
 
-export default function AddNewCategory({ categories, onOpenDishDialog }) {
+export default function FoodList({ categories, onOpenDishDialog }) {
   return (
     <div className="bg-white w-[1171px] p-6 rounded-md  mt-[24px] mb-[24px] ">
       {categories.map((cat, index) => (

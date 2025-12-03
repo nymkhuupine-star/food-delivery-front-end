@@ -2,7 +2,7 @@
 
 import SideBar from "@/_components/SideBar";
 
-import DishesCategory from "@/_components/DishesCategory";
+import DishesCategory from "@/_components/category/DishesCategory";
 import axios from "axios";
 import { useFormik } from "formik";
 import { toast } from "sonner";
