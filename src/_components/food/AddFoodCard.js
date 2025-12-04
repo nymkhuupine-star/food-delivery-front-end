@@ -7,25 +7,22 @@ import { useFormik } from "formik";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import ImagePicker from "@/_components/ImagePicker"; 
+
 import Image from "next/image";
 import AddImageIcon from "@/_icons/AddImageIcon";
-
 
 import MiniFoodCard from "./MiniFoodCard";
 
 const UPLOAD_PRESET = "food-delivery";
 const CLOUD_NAME = "dxzpmljjs";
 
-
 export default function AddFoodCard({ category }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newDish, setNewDish] = useState([]);
-   const [logoUrl, setLogoUrl] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const [preview, setPreview] = useState(null);
-
 
   const formik = useFormik({
     initialValues: {
@@ -52,20 +49,18 @@ export default function AddFoodCard({ category }) {
       return toast.error("Price must be valid!");
     }
 
-    
     toast.success("Dish added!");
-     setNewDish((prev) => [
-    ...prev,
-    {
-      dishName,
-      price,
-      image: preview,                
-      description: values.ingredients,
-    },
-  ]);
+    setNewDish((prev) => [
+      ...prev,
+      {
+        dishName,
+        price,
+        image: preview,
+        description: values.ingredients,
+      },
+    ]);
 
     setIsDialogOpen(false);
-    
   }
 
   const uploadToCloudinary = async (file) => {
@@ -89,7 +84,6 @@ export default function AddFoodCard({ category }) {
     }
   };
 
-  // ---- Handle upload from input ----
   const handleLogoUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -99,6 +93,7 @@ export default function AddFoodCard({ category }) {
     try {
       const url = await uploadToCloudinary(file);
       setLogoUrl(url);
+      setPreview(url);
     } catch (err) {
       console.log("Failed to upload: " + err.message);
     } finally {
@@ -108,41 +103,39 @@ export default function AddFoodCard({ category }) {
 
   return (
     <div className="">
-<div className="flex flex-row  gap-[13px]">
-    
-    <div
-      className="bg-white w-[270.75px] h-[241px] rounded-[20px] border flex flex-col"
-      style={{
-        borderStyle: "dashed",
-        borderColor: "#EF4444",
-      }}
-    >
-      <div className="flex flex-col pl-[110px] pt-[70px] pr-[110px]">
-        <Button
-          className="bg-red-500 h-[50px] w-[50px] rounded-4xl"
-          onClick={() => setIsDialogOpen(true)}
+      <div className="flex flex-row  gap-[13px]">
+        <div
+          className="bg-white w-[270.75px] h-[241px] rounded-[20px] border flex flex-col"
+          style={{
+            borderStyle: "dashed",
+            borderColor: "#EF4444",
+          }}
         >
-          <PlusIcon />
-        </Button>
-      </div>
+          <div className="flex flex-col pl-[110px] pt-[70px] pr-[110px]">
+            <Button
+              className="bg-red-500 h-[50px] w-[50px] rounded-4xl"
+              onClick={() => setIsDialogOpen(true)}
+            >
+              <PlusIcon />
+            </Button>
+          </div>
 
-      <p className="flex justify-center pt-[10px] items-center">
-        Add new Dish to {category.categoryName}
-      </p>
-      </div>
+          <p className="flex justify-center pt-[10px] items-center">
+            Add new Dish to {category.categoryName}
+          </p>
+        </div>
         <div className="flex flex-row  gap-[13px] ">
-  {newDish.map((dish, index) => (
-    <MiniFoodCard
-      key={index}
-      image={dish.image }
-      name={dish.dishName}
-      price={dish.price}
-      description={dish.description}
-    />
-  ))}
-</div>
-</div>
-      
+          {newDish.map((dish, index) => (
+            <MiniFoodCard
+              key={index}
+              image={dish.image}
+              name={dish.dishName}
+              price={dish.price}
+              description={dish.description}
+            />
+          ))}
+        </div>
+      </div>
 
       {isDialogOpen && (
         <div className="fixed inset-0 bg-white/50 flex items-center justify-center z-50">
@@ -160,7 +153,6 @@ export default function AddFoodCard({ category }) {
               </button>
             </div>
 
-           
             <div className="flex flex-row pt-[44px] gap-[24px]">
               <div>
                 <p className="text-sm">Food name</p>
@@ -202,62 +194,54 @@ export default function AddFoodCard({ category }) {
 
             <p className="text-sm mb-1">Food image</p>
 
-           
+            <div className="bg-white rounded-lg shadow">
+              <input
+                id="fileInput"
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                disabled={uploading}
+                className="hidden"
+              />
 
-<div className="bg-white rounded-lg shadow">
+              {!logoUrl && (
+                <label
+                  htmlFor="fileInput"
+                  className="
+                    w-[420px] h-[138px]
+                    flex flex-col gap-2 justify-center items-center
+                    rounded-md border border-dashed
+                    border-[rgba(37,99,235,0.20)]
+                    bg-[rgba(37,99,235,0.05)]
+                    cursor-pointer  overflow-hidden
+                  "
+                >
+                  <div className="w-[36px] h-[36px] rounded-full bg-white flex items-center justify-center">
+                    <AddImageIcon />
+                  </div>
 
- 
-  <input
-    id="fileInput"
-    type="file"
-    accept="image/*"
-    onChange={handleLogoUpload}
-    disabled={uploading}
-    className="hidden"
-  />
+                  <p className="text-xs text-gray-500">Click to upload image</p>
+                </label>
+              )}
 
+              {logoUrl && (
+                <div className="relative w-[420px] h-[138px]">
+                  <Image
+                    src={logoUrl}
+                    alt="Uploaded image"
+                    fill
+                    className="object-cover rounded "
+                  />
 
-  {!logoUrl && (
-    <label
-      htmlFor="fileInput"
-      className="
-        w-[420px] h-[138px]
-        flex flex-col gap-2 justify-center items-center
-        rounded-md border border-dashed 
-        border-[rgba(37,99,235,0.20)]
-        bg-[rgba(37,99,235,0.05)]
-        cursor-pointer
-      "
-    >
-      <div className="w-[36px] h-[36px] rounded-full bg-white flex items-center justify-center">
-        <AddImageIcon />
-      </div>
-
-      <p className="text-xs text-gray-500">Click to upload image</p>
-    </label>
-  )}
-
-  {logoUrl && (
-    <div className="relative w-64 h-64 mt-4">
-      <Image
-        src={logoUrl}
-        alt="Uploaded image"
-        fill
-        className="object-contain rounded border"
-      />
-
-      {/* Remove button */}
-      <button
-        onClick={() => setLogoUrl(null)}
-        className="absolute top-2 right-2 bg-white p-1 rounded-full shadow"
-      >
-        ❌
-      </button>
-    </div>
-  )}
-
-</div>
-
+                  <button
+                    onClick={() => setLogoUrl(null)}
+                    className="absolute top-2 right-2 bg-white p-1 rounded-full shadow"
+                  >
+                    <CancelIcon className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+            </div>
 
             <div className="flex gap-2 justify-end">
               <button
@@ -270,8 +254,6 @@ export default function AddFoodCard({ category }) {
           </div>
         </div>
       )}
-      
-
     </div>
   );
 }

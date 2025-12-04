@@ -1,5 +1,5 @@
 "use client";
-import LoginStepOne from "@/_components/LoginStepOne";
+import LoginStepOne from "@/_components/login/LoginStepOne";
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
