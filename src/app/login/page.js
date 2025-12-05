@@ -30,6 +30,7 @@ export default function Login() {
       );
       router.push("/home");
       setMessage(response.data.message || "amjilttai bolloo");
+      localStorage.setItem("token", response.data.token);
       alert("amjilttai bolloo");
     } catch (error) {
       setMessage(error.response?.data?.message || "amjiltgui bolloo");
@@ -46,7 +47,6 @@ export default function Login() {
     onSubmit: async (values) => {
       const { email, password } = values;
       await createUser(email, password);
-      alert(JSON.stringify(values, null, 2));
     },
   });
 

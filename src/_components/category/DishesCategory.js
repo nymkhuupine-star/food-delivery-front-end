@@ -30,20 +30,25 @@ export default function DishesCategory({ formik }) {
     getCategory();
   }, []);
 
-  const handleAddCategory = async () => {
-    handleSubmit(values);
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
     const name = values.categoryName.trim();
 
     if (name !== "") {
-      setCategories([...categories, { name }]);
+      handleSubmit(values);
     } else {
       toast.error("Category name cannot be empty!");
     }
   };
 
   const handleDeleteCategory = async (id) => {
+    const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://localhost:1000/category/${id}`);
+      await axios.delete(`http://localhost:1000/category/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       toast.success("success delete category");
       getCategory();
     } catch (err) {
@@ -114,7 +119,7 @@ export default function DishesCategory({ formik }) {
 
                 <div className="flex gap-2 justify-end">
                   <button
-                    onClick={handleAddCategory}
+                    type="submit"
                     className="px-4 py-2 bg-black text-white rounded-lg "
                   >
                     Add category

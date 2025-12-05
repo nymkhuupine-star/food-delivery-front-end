@@ -7,22 +7,27 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Snowfall from "react-snowfall";
+import { SnowCanvas } from "@/_components/SnowCanvas";
+import { useEffect, useState } from "react";
 
 export default function Category() {
   const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const createCategory = async (categoryName) => {
-    try {
-      const response = await axios.post("http://localhost:1000/category", {
-        categoryName: categoryName,
-      });
-      router.push("/home");
-      setMessage(response.data.message || "amjilttai bolloo");
-      alert("amjilttai bolloo");
-    } catch (error) {
-      setMessage(error.response?.data?.message || "amjiltgui bolloo");
-      alert("amjiltgui");
-    }
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      `http://localhost:1000/category`,
+      { categoryName },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
   };
   const formik = useFormik({
     initialValues: {
@@ -33,11 +38,11 @@ export default function Category() {
         const { categoryName } = values;
 
         await createCategory(categoryName);
-        alert(JSON.stringify(values, null, 2));
 
         toast.success("New Category is being added to the menu", {
           className: "bg-black text-white",
         });
+        // await getCategory();
         resetForm();
         setIsDialogOpen(false);
       } catch (error) {
@@ -46,15 +51,29 @@ export default function Category() {
       }
     },
   });
+  // const getCategory = async () => {
+  //   try {
+  //     const result = await axios.get("http://localhost:1000/category");
+  //     setCategories(result.data);
+  //   } catch (err) {
+  //     toast.error("Failed to load category");
+  //   }
+  // };
+  // useEffect(() => {
+  //   getCategory();
+  // }, []);
 
   return (
-    <div className="w-full flex justify-center bg-zinc-200 ">
-      <div className="flex flex-row max-w-[1440px] bg-zinc-200 w-full">
-        <SideBar />
-        <div className="flex flex-col gap-[24px]">
-          <DishesCategory formik={formik} />
+    <>
+      <SnowCanvas />
+      <div className="w-full flex justify-center bg-zinc-200 ">
+        <div className="flex flex-row max-w-[1440px] bg-zinc-200 w-full">
+          <SideBar />
+          <div className="flex flex-col gap-[24px]">
+            <DishesCategory formik={formik} />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
