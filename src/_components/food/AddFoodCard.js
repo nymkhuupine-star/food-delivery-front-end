@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import { PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 import Image from "next/image";
 import AddImageIcon from "@/_icons/AddImageIcon";
+import { useApp } from "@/_provider/CategoryFoodProvider";
 
 import MiniFoodCard from "./MiniFoodCard";
 
@@ -22,6 +23,8 @@ export default function AddFoodCard({ category }) {
   const [logoUrl, setLogoUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  const { Foods, createFood, deleteFood, fetchFood } = useApp();
+
   const [preview, setPreview] = useState(null);
 
   const formik = useFormik({
@@ -31,37 +34,40 @@ export default function AddFoodCard({ category }) {
       ingredients: "",
       image: null,
     },
-    onSubmit: handleAddDish,
+    onSubmit: async (values, { resetForm }) => {
+      await handleAddFood(values, resetForm);
+    },
   });
+  const { values, handleChange, handleBlur, handleSubmit, resetForm } = formik;
 
-  const { values, handleChange, handleBlur, handleSubmit, setFieldValue } =
-    formik;
-
-  async function handleAddDish() {
+  const handleAddFood = async () => {
     const dishName = values.dishName.trim();
     const price = values.price;
+    console.log("hello", dishName, price);
 
-    if (!dishName) {
-      return toast.error("Food name cannot be empty!");
-    }
+    if (!dishName) return toast.error("Food name cannot be empty!");
+    if (!price || price <= 0) return toast.error("Price must be valid!");
 
-    if (!price || price <= 0) {
-      return toast.error("Price must be valid!");
-    }
-
-    toast.success("Dish added!");
-    setNewDish((prev) => [
-      ...prev,
-      {
+    try {
+      await createFood({
         dishName,
         price,
-        image: preview,
         description: values.ingredients,
-      },
-    ]);
+        image: preview,
+      });
 
-    setIsDialogOpen(false);
-  }
+      toast.success("Dish added!");
+      // resetForm();
+      setIsDialogOpen(false);
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to add dish");
+    }
+  };
+
+  useEffect(() => {
+    fetchFood();
+  }, []);
 
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
@@ -245,7 +251,7 @@ export default function AddFoodCard({ category }) {
 
             <div className="flex gap-2 justify-end">
               <button
-                onClick={handleSubmit}
+                onClick={handleAddFood}
                 className="px-4 py-2 bg-black text-white rounded-lg mt-[40px]"
               >
                 Add Dish

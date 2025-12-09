@@ -1,4 +1,3 @@
-
 "use client";
 
 import SideBar from "@/_components/SideBar";
@@ -8,52 +7,67 @@ import { useFormik } from "formik";
 import { toast } from "sonner";
 import { SnowCanvas } from "@/_components/SnowCanvas";
 import { useEffect, useState } from "react";
+import { useApp } from "@/_provider/CategoryFoodProvider";
 
 export default function Category() {
-  const [categories, setCategories] = useState([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { categories, createCategory, fetchCategories } = useApp();
 
-  const getCategory = async () => {
-    try {
-      const result = await axios.get("http://localhost:1000/category");
-      setCategories(result.data);
-    } catch (err) {
-      toast.error("Failed to load category");
-    }
-  };
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // const getCategory = async () => {
+  //   try {
+  //     const result = await axios.get("http://localhost:1000/category");
+  //     setCategories(result.data);
+  //   } catch (err) {
+  //     toast.error("Failed to load category");
+  //   }
+  // };
 
   useEffect(() => {
-    getCategory();
+    fetchCategories();
   }, []);
-
-  const createCategory = async (categoryName) => {
-    const token = localStorage.getItem("token");
-
-    await axios.post(
-      `http://localhost:1000/category`,
-      { categoryName },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  };
-
   const formik = useFormik({
     initialValues: { categoryName: "" },
     onSubmit: async (values, { resetForm }) => {
       try {
-        await createCategory(values.categoryName);
-        await getCategory(); 
+        await createCategory({ categoryName: values.categoryName });
         toast.success("New Category added!");
         resetForm();
+        setIsDialogOpen(false);
       } catch (err) {
         toast.error("Failed to add category");
       }
     },
   });
+
+  // const createCategory = async (categoryName) => {
+  //   const token = localStorage.getItem("token");
+
+  //   await axios.post(
+  //     `http://localhost:1000/category`,
+  //     { categoryName },
+  //     {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     }
+  //   );
+  // };
+
+  // const formik = useFormik({
+  //   initialValues: { categoryName: "" },
+  //   onSubmit: async (values, { resetForm }) => {
+  //     try {
+  //       await createCategory(values.categoryName);
+  //       await getCategory();
+  //       toast.success("New Category added!");
+  //       resetForm();
+  //     } catch (err) {
+  //       toast.error("Failed to add category");
+  //     }
+  //   },
+  // });
 
   return (
     <>
@@ -65,9 +79,8 @@ export default function Category() {
             <DishesCategory
               formik={formik}
               categories={categories}
-              getCategory={getCategory}
               isDialogOpen={isDialogOpen}
-    setIsDialogOpen={setIsDialogOpen}
+              setIsDialogOpen={setIsDialogOpen}
             />
           </div>
         </div>
