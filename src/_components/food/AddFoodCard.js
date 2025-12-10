@@ -23,7 +23,7 @@ export default function AddFoodCard({ category }) {
   const [logoUrl, setLogoUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  const { Foods, createFood, deleteFood, fetchFood } = useApp();
+  const { Foods, createFood, deleteFood, fetchFood, triggerRefresh } = useApp();
 
   const [preview, setPreview] = useState(null);
 
@@ -43,7 +43,6 @@ export default function AddFoodCard({ category }) {
   const handleAddFood = async () => {
     const dishName = values.dishName.trim();
     const price = values.price;
-    console.log("hello", dishName, price);
 
     if (!dishName) return toast.error("Food name cannot be empty!");
     if (!price || price <= 0) return toast.error("Price must be valid!");
@@ -54,8 +53,9 @@ export default function AddFoodCard({ category }) {
         price,
         description: values.ingredients,
         image: preview,
+        category: category._id,
       });
-
+      triggerRefresh();
       toast.success("Dish added!");
       // resetForm();
       setIsDialogOpen(false);

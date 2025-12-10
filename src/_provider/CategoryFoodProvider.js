@@ -12,6 +12,9 @@ export const CategoryFoodProvider = ({ children }) => {
   const [foods, setFoods] = useState([]);
   const [foodLoading, setFoodLoading] = useState(false);
 
+  const [refresh, setRefresh] = useState(false);
+  const triggerRefresh = () => setRefresh((prev) => !prev);
+
   const fetchCategories = async () => {
     setCatLoading(true);
     try {
@@ -54,6 +57,7 @@ export const CategoryFoodProvider = ({ children }) => {
       setFoodLoading(false);
     }
   };
+
   const fetchFoodById = async (id) => {
     setFoodLoading(true);
     try {
@@ -67,6 +71,8 @@ export const CategoryFoodProvider = ({ children }) => {
   const createFood = async (payload) => {
     const { data } = await axios.post(`http://localhost:1000/food`, payload);
     setFoods((prev) => [data, ...prev]);
+
+    triggerRefresh();
     return data;
   };
 
@@ -76,12 +82,16 @@ export const CategoryFoodProvider = ({ children }) => {
       payload
     );
     setFoods((prev) => prev.map((f) => (f._id === id ? data : f)));
+
+    triggerRefresh();
     return data;
   };
 
   const deleteFood = async (id) => {
     await axios.delete(`http://localhost:1000/food/${id}`);
     setFoods((prev) => prev.filter((f) => f._id !== id));
+
+    triggerRefresh();
   };
 
   useEffect(() => {
@@ -104,6 +114,9 @@ export const CategoryFoodProvider = ({ children }) => {
     updateFood,
     deleteFood,
     fetchFoodById,
+
+    refresh,
+    triggerRefresh,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -1,6 +1,7 @@
 "use client";
 
 import AddFoodCard from "./AddFoodCard";
+import { CategoryFoods } from "./CategoryFoods";
 
 export default function FoodList({ categories, onOpenDishDialog }) {
   return (
@@ -11,6 +12,7 @@ export default function FoodList({ categories, onOpenDishDialog }) {
 
           <div className="grid grid-cols-4 gap-3">
             <AddFoodCard category={cat} onOpen={onOpenDishDialog} />
+            <CategoryFoods categoryId={cat._id} />
           </div>
         </div>
       ))}
