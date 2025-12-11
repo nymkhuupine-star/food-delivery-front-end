@@ -1,82 +1,22 @@
-"use client";
-
-import { useState } from "react";
+import CancelIcon from "@/_icons/CancelIcon";
 import Image from "next/image";
 
-const UPLOAD_PRESET = "food-delivery";
-const CLOUD_NAME = "dxzpmljjs";
-
-export default function Home() {
-  const [logoUrl, setLogoUrl] = useState("");
-  const [uploading, setUploading] = useState(false);
-
-  // ---- Upload to Cloudinary ----
-  const uploadToCloudinary = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
-
-    try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const data = await response.json();
-      return data.secure_url;
-    } catch (error) {
-      console.error("Cloudinary upload failed:", error);
-    }
-  };
-
-  // ---- Handle upload from input ----
-  const handleLogoUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    setUploading(true);
-
-    try {
-      const url = await uploadToCloudinary(file);
-      setLogoUrl(url);
-    } catch (err) {
-      console.log("Failed to upload: " + err.message);
-    } finally {
-      setUploading(false);
-    }
-  };
-
+export default function Test() {
   return (
-    <div className="mb-8 p-6 bg-white rounded-lg shadow">
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleLogoUpload}
-        disabled={uploading}
-        className="mb-4 p-2 border border-gray-300 rounded"
-      />
-
-      {uploading && <p className="text-blue-600">Uploading...</p>}
-
-      {logoUrl && (
-        <div className="mt-4">
-          <p className="text-green-600 font-semibold mb-2">Logo uploaded!</p>
-
-          <div className="relative w-64 h-64">
-            <Image
-              src={logoUrl}
-              alt="Uploaded image"
-              fill
-              className="object-contain rounded border border-gray-300"
-            />
+    <>
+      <div className="bg-white border border-neutral-200  w-[397.33px] h-[342px] rounded-xl flex flex-col">
+        <div className="flex justify-center mt-[16px] ml-[16px] w-[365.33px] h-[210px] relative">
+          <image src="./Product.png" fill className="object-cover" />
+        </div>
+        <div className="pt-[20px] pl-[15px] pr-[16px]">
+          <div className=" flex flex-row justify-between ">
+            <p className="text-red-500 text-sm "> name</p>
+            <p className="text-xs">price</p>
           </div>
 
-          <p className="mt-2 text-sm text-gray-600 break-all">{logoUrl}</p>
+          <p className="text-sm text-gray-600 mt-1">ingredients</p>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
