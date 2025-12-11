@@ -45,11 +45,11 @@ export const FoodCard = ({ categoryId }) => {
             </div>
             <div className="pt-[20px] pl-[15px] pr-[16px]">
               <div className=" flex flex-row">
-                <p> {food.name} </p>
+                <p> {food.foodName} </p>
                 <p>${food.price}</p>
               </div>
 
-              <p className="text-sm text-gray-600 mt-1">{food.description}</p>
+              <p className="text-sm text-gray-600 mt-1">{food.ingredients}</p>
             </div>
           </div>
         </div>
@@ -57,3 +57,7 @@ export const FoodCard = ({ categoryId }) => {
     </>
   );
 };
+
+
+
+
