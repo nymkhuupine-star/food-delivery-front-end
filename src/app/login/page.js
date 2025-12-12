@@ -22,7 +22,7 @@ export default function Login() {
     console.log(email, password);
     try {
       const response = await axios.post(
-        "http://localhost:1000/authentication/login",
+        "https://food-delivery-back-end-gq7z.onrender.com/authentication/login",
         {
           email: email,
           password: password,

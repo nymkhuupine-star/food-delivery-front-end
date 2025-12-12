@@ -14,15 +14,6 @@ export default function Category() {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // const getCategory = async () => {
-  //   try {
-  //     const result = await axios.get("http://localhost:1000/category");
-  //     setCategories(result.data);
-  //   } catch (err) {
-  //     toast.error("Failed to load category");
-  //   }
-  // };
-
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -39,35 +30,6 @@ export default function Category() {
       }
     },
   });
-
-  // const createCategory = async (categoryName) => {
-  //   const token = localStorage.getItem("token");
-
-  //   await axios.post(
-  //     `http://localhost:1000/category`,
-  //     { categoryName },
-  //     {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     }
-  //   );
-  // };
-
-  // const formik = useFormik({
-  //   initialValues: { categoryName: "" },
-  //   onSubmit: async (values, { resetForm }) => {
-  //     try {
-  //       await createCategory(values.categoryName);
-  //       await getCategory();
-  //       toast.success("New Category added!");
-  //       resetForm();
-  //     } catch (err) {
-  //       toast.error("Failed to add category");
-  //     }
-  //   },
-  // });
 
   return (
     <>

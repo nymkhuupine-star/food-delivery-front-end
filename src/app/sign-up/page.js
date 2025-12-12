@@ -37,7 +37,7 @@ export default function SignUp() {
     console.log(email, password);
     try {
       const response = await axios.post(
-        "http://localhost:1000/authentication/sign-up",
+        "https://food-delivery-back-end-gq7z.onrender.com/authentication/sign-up",
         {
           email: email,
           password: password,

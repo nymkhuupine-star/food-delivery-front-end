@@ -12,7 +12,7 @@ export const CategoryFoods = ({ categoryId }) => {
   const getCategoryFoods = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:1000/food/category/${categoryId}`
+        `https://food-delivery-back-end-gq7z.onrender.com/food/category/${categoryId}`
       );
 
       setFoods(response.data);
