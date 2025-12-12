@@ -6,6 +6,7 @@ import SocialIcon from "@/_icons/SocialIcon";
 
 export default function Footer() {
   return (
+   
     <div className="bg-slate-950 h-[755px] pt-[60px] w-full">
       
      
@@ -63,5 +64,6 @@ export default function Footer() {
         </div>
       </div>
     </div>
+    
   );
 }

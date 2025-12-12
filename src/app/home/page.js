@@ -15,7 +15,7 @@ export default function Home({ formik }) {
       <SnowCanvas />
       <Header />
       <HeroSection className=" flex items-center justify-center" />
-      <HomeFoodList/>
+      <HomeFoodList />
       
       <Footer />
     </div>

@@ -34,15 +34,15 @@ export const HomeFoodList = () => {
   const { categories } = useApp();
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8  bg-neutral-700 ">
       {categories.map((cat) => (
-        <div key={cat._id} className="w-full">
-          {/* Category Name */}
-          <h2 className="text-xl font-bold text-white mb-4 bg-neutral-700 p-4 rounded">
+        <div key={cat._id} className="w-full   bg-neutral-700">
+         
+          <h2 className="text-xl font-bold text-white mb-4 w-[1264px] bg-neutral-700 p-4 rounded">
             {cat.categoryName}
           </h2>
 
-          {/* Food Cards */}
+         
           <FoodCard categoryId={cat._id} />
         </div>
       ))}
