@@ -1,3 +1,7 @@
+
+
+
+
 "use client";
 
 import CancelIcon from "@/_icons/CancelIcon";
@@ -6,18 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import FoodList from "../food/FoodList";
-import HomeFoodList from "../food/HomeFoodList";
 import { useApp } from "@/_provider/CategoryFoodProvider";
 
-export default function DishesCategory({
-  formik,
-  isDialogOpen,
-  setIsDialogOpen,
-}) {
-  const { categories, createCategory, deleteCategory } = useApp();
+export default function DishesCategory({ formik, isDialogOpen, setIsDialogOpen }) {
+  const { categories, createCategory, deleteCategory, foods } = useApp();
   const { values, handleChange, handleBlur } = formik;
 
   const handleAddCategory = async (e) => {
@@ -28,10 +26,7 @@ export default function DishesCategory({
     }
 
     try {
-      await createCategory({
-        categoryName: values.categoryName,
-      });
-
+      await createCategory({ categoryName: values.categoryName });
       toast.success("Category created!");
       setIsDialogOpen(false);
     } catch (error) {
@@ -51,7 +46,7 @@ export default function DishesCategory({
   return (
     <div className="pt-[84px] flex flex-col pl-[24px]">
       <div className="h-[176px] bg-white w-[1171px] rounded-md p-6">
-        <p className="text-xl">Dishes category</p>
+        <p className="text-xl font-semibold">Dishes category</p>
 
         <div className="flex flex-wrap gap-2 mt-4">
           {categories.map((category) => (
@@ -66,11 +61,19 @@ export default function DishesCategory({
                 <CancelIcon className="w-3 h-3" />
               </button>
 
+          
               <span className="mx-2">{category.categoryName}</span>
-              <Badge className="ml-2">1</Badge>
+
+             
+              <Badge className="ml-2 px-2 py-1 text-xs">
+                {
+                  foods.filter((food) => food.category === category._id).length
+                }
+              </Badge>
             </div>
           ))}
 
+         
           <Button
             className="bg-red-500 w-[36px] h-[36px] rounded-3xl"
             onClick={() => setIsDialogOpen(true)}
@@ -79,6 +82,7 @@ export default function DishesCategory({
           </Button>
         </div>
 
+       
         {isDialogOpen && (
           <form onSubmit={handleAddCategory}>
             <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -86,6 +90,7 @@ export default function DishesCategory({
                 <div className="flex justify-between">
                   <h3 className="text-xl font-bold">Add New Category</h3>
                   <button
+                    type="button"
                     onClick={() => setIsDialogOpen(false)}
                     className="px-3 py-3 bg-gray-200 rounded-full"
                   >
@@ -94,7 +99,6 @@ export default function DishesCategory({
                 </div>
 
                 <h5 className="text-sm pt-[30px] pb-[8px]">Category name</h5>
-
                 <Input
                   type="text"
                   name="categoryName"
@@ -119,7 +123,8 @@ export default function DishesCategory({
         )}
       </div>
 
-      <div className="space-y-6">
+      
+      <div className="space-y-6 mt-6">
         <FoodList categories={categories} />
       </div>
     </div>

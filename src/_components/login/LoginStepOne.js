@@ -3,6 +3,7 @@ import LoginIcon from "@/_icons/loginIcon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 const LoginStepOne = ({ formik }) => {
   const { values, handleChange, handleBlur, errors, touched, handleSubmit } =
@@ -62,16 +63,26 @@ const LoginStepOne = ({ formik }) => {
           <p className="underline  text-sm pb-[24px]">Forgot password ?</p>
         </div>
 
-        <Button
-          className="oklch(55.2% 0.016 285.938) w-[416px] h-[36px] text-sm "
-          variant="secondary"
-          onClick={handleSubmit}
-        >
-          Let's Go
-        </Button>
+       <Button
+  className={`w-[416px] h-[36px] text-sm transition-colors
+    ${
+      !errors.confirmPassword && values.confirmPassword
+        ? "bg-[#18181B] text-white"
+        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+    }
+  `}
+  variant="secondary"
+  onClick={handleSubmit}
+  disabled={errors.confirmPassword || !values.confirmPassword}
+>
+  Let's Go
+</Button>
+
         <div className="flex flex-row pt-[24px] gap-[5px]">
           <p className="pl-[85px] text-base">Don’t have an account?</p>
-          <p className="text-base  text-sky-400"> Sign up </p>
+           <Link href="/sign-up" className="text-base text-sky-400">
+        Sign up
+      </Link>
         </div>
       </div>
       <div className="flex justify-center items-center ">
@@ -81,3 +92,5 @@ const LoginStepOne = ({ formik }) => {
   );
 };
 export default LoginStepOne;
+
+

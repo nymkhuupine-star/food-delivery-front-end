@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Login() {
   const router = useRouter();
@@ -28,13 +29,15 @@ export default function Login() {
           password: password,
         }
       );
-      router.push("/home");
-      setMessage(response.data.message || "amjilttai bolloo");
+      router.push("/");
+     
       localStorage.setItem("token", response.data.token);
-      alert("amjilttai bolloo");
+     toast.success("Login successful");
     } catch (error) {
-      setMessage(error.response?.data?.message || "amjiltgui bolloo");
-      alert("Имэйл бүртгэлгүй байна");
+       toast.error(
+      error.response?.data?.message ||
+      "Invalid email or password"
+    );
     }
   };
 

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function Test({ open, setOpen, food, addToCart }) {
+export default function OrderDetail({ open, setOpen, food, addToCart }) {
   const [qty, setQty] = useState(1);
 
   const handleAddToCart = () => {

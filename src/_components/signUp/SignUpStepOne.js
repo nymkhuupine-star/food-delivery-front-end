@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const SignUpStepOne = ({ onNext, formik }) => {
   const router = useRouter();
@@ -78,7 +79,9 @@ const SignUpStepOne = ({ onNext, formik }) => {
         </Button>
         <div className="flex flex-row pt-[24px] gap-[5px]">
           <p className="pl-[85px] text-base">Already have an account?</p>
-          <p className="text-base  text-sky-400"> Log in </p>
+         <Link href="/login" className="text-base text-sky-400">
+        Log in
+      </Link>
         </div>
       </div>
       <div className="flex justify-center items-center ">
@@ -89,3 +92,8 @@ const SignUpStepOne = ({ onNext, formik }) => {
 };
 
 export default SignUpStepOne;
+
+
+
+
+

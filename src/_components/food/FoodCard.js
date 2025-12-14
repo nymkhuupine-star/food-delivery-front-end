@@ -33,7 +33,7 @@ export default function FoodCard({ categoryId }) {
   }, [categoryId, refresh]);
 
   return (
-    <div className="w-[1264px] mx-auto grid grid-cols-3 gap-[40px]">
+    <div className="w-[1264px] mx-auto grid grid-cols-3 gap-[40px] ">
       {foods.map((food, index) => (
         <div
           key={index}

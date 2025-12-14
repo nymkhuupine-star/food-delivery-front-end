@@ -7,6 +7,10 @@ import SocialIcon from "@/_icons/SocialIcon";
 export default function Footer() {
   return (
    
+    <div className="pt-[54px]  bg-neutral-700 ">
+
+      
+    
     <div className="bg-slate-950 h-[755px] pt-[60px] w-full">
       
      
@@ -63,6 +67,7 @@ export default function Footer() {
           <p>Cookie policy</p>
         </div>
       </div>
+    </div>
     </div>
     
   );

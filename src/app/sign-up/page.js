@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
@@ -34,23 +35,26 @@ export default function SignUp() {
   const [message, setMessage] = useState("");
 
   const createUser = async (email, password) => {
-    console.log(email, password);
-    try {
-      const response = await axios.post(
-        "https://food-delivery-back-end-gq7z.onrender.com/authentication/sign-up",
-        {
-          email: email,
-          password: password,
-        }
-      );
-      router.push("/login");
-      setMessage(response.data.message || "amjilttai bolloo");
-      alert("amjilttai bolloo");
-    } catch (error) {
-      setMessage(error.response?.data?.message || "amjiltgui bolloo");
-      alert("amjiltgui bolloo");
+  try {
+    const response = await axios.post(
+      "https://food-delivery-back-end-gq7z.onrender.com/authentication/sign-up",
+      { email, password }
+    );
+
+    toast.success("Account created successfully. Please log in.");
+    router.push("/login");
+
+  } catch (error) {
+    if (error.response?.status === 409) {
+      toast.error("This email is already registered");
+    } else if (error.response?.status === 400) {
+      toast.error("Invalid email or password");
+    } else {
+      toast.error("Something went wrong. Please try again");
     }
-  };
+  }
+};
+
 
   const formik = useFormik({
     initialValues: {
@@ -62,7 +66,7 @@ export default function SignUp() {
     onSubmit: async (values) => {
       const { email, password } = values;
       await createUser(email, password);
-      alert(JSON.stringify(values, null, 2));
+     
     },
   });
 
@@ -73,3 +77,10 @@ export default function SignUp() {
     </div>
   );
 }
+
+
+
+
+
+
+

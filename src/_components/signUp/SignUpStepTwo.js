@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
+
 
 const SignUpStepTwo = ({ onBack, formik }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -92,19 +94,24 @@ const SignUpStepTwo = ({ onBack, formik }) => {
         </div>
 
         <Button
-          className={`oklch(55.2% 0.016 285.938) w-[416px] h-[36px] text-sm ${
-            !errors.confirmPassword
-              ? "bg-[#18181B] text-white"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          } `}
-          variant="secondary"
-          onClick={handleSubmit}
-        >
-          Let's Go
-        </Button>
+  className={`w-[416px] h-[36px] text-sm transition-colors
+    ${
+      !errors.confirmPassword && values.confirmPassword
+        ? "bg-[#18181B] text-white"
+        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+    }
+  `}
+  onClick={handleSubmit}
+  disabled={errors.confirmPassword || !values.confirmPassword}
+>
+  Let's Go
+</Button>
+
         <div className="flex flex-row pt-[24px] gap-[5px]">
           <p className="pl-[85px] text-base">Already have an account?</p>
-          <p className="text-base  text-sky-400"> Log in </p>
+         <Link href="/login" className="text-base text-sky-400">
+        Log in
+      </Link>
         </div>
       </div>
       <div className="flex justify-center items-center ">
@@ -115,3 +122,5 @@ const SignUpStepTwo = ({ onBack, formik }) => {
 };
 
 export default SignUpStepTwo;
+
+
