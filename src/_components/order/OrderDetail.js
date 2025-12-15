@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import CancelIcon from "@/_icons/CancelIcon";
@@ -7,94 +9,137 @@ import ShoppingCardIcon from "@/_icons/ShoppingCartIcon";
 import { Input } from "@/components/ui/input";
 import OrderMiniCard from "./OrderMiniCard";
 import { useCart } from "@/_provider/CartProvider";
+import FoodIcon from "@/_icons/FoodIcon";
+import { useState } from "react";
+import Order from "./Order";
+import SuccessDialog from "../dialog/SuccessDialog";
+
+
 
 export default function OrderDetail() {
   const { cartItems, removeFromCart, isOrderOpen, setIsOrderOpen } = useCart();
+  const [isCardView, setIsCardView] = useState(true);
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
-  const grandTotal = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
-  const shipping = 5.99;
-  const total = grandTotal + shipping;
   if (!isOrderOpen) return null;
 
-  if (!cartItems.length) {
-    return <p className="text-gray-400">No items in cart</p>;
-  }
+  
+
+  const grandTotal = cartItems.reduce(
+    (sum, item) => sum + item.totalPrice,
+    0
+  );
+  const shipping = 5.99;
+  const total = grandTotal + shipping;
 
   return (
-    <>
-      <div className="bg-neutral-700 rounded-s-2xl  w-[535px] h-[1024px]  flex flex-col">
-        <div>
-          <button onClick={() => setIsOrderOpen(false)}></button>
+    <div className="bg-neutral-700 rounded-s-2xl w-[535px] h-[1050px] flex flex-col">
+     
+      <div className="flex items-center pl-[34.5px] pt-[8px]">
+        <ShoppingCardIcon />
+        <p className="text-white ml-[10px]">Order detail</p>
+
+        <button
+          onClick={() => setIsOrderOpen(false)}
+          className="ml-auto mr-[20px] px-3 py-3 bg-gray-200 rounded-full"
+        >
+          <CancelIcon />
+        </button>
+      </div>
+
+      <div className="bg-white h-[44px] w-[471px] flex ml-[30px] mt-[12px] rounded-xl">
+        <button className={`w-1/2 h-[36px] m-[4px] rounded-xl ${isCardView ? "bg-red-500 text-white" : ""}`}
+        onClick={() => setIsCardView(true)}>
+          Card
+        </button>
+        <button  className={`w-1/2 h-[36px] m-[4px] rounded-xl ${!isCardView ? "bg-red-500 text-white" : ""}`}
+        onClick={() => setIsCardView(false)} >
+          Order
+        </button>
+      </div>
+
+    {isCardView ? (
+      <>
+      <div className="w-[471px] bg-white rounded-lg ml-[30px] mt-[30px] p-[16px] flex flex-col h-[620px]">
+        <p className="mb-[16px]">My cart</p>
+
+   
+        <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-3 pr-2">
+          {cartItems.length === 0 ? (
+            <div className="w-[439px] h-[182px] bg-zinc-100 rounded-xl flex flex-col justify-center items-center p-[12px]
+">
+  <FoodIcon/>
+  <p className="text-zinc-950 text-center text-base font-bold leading-7"> Your cart is empthy   </p>
+  <p className="text-zinc-500 text-center text-xs font-normal leading-4" >Hungry? 🍔 Add some delicious dishes to your cart and satisfy your cravings!</p>
+</div>
+          ) : (
+            cartItems.map((item) => (
+              <OrderMiniCard
+                key={item._id}
+                item={item}
+                removeFromCart={removeFromCart}
+              />
+            ))
+          )}
         </div>
 
-        <div className="flex flex-row pl-[34.5px] pt-[8px] ">
-          <ShoppingCardIcon />
-          <p className=" text-white ml-[10px]">Order detail</p>
-
-          <button className=" px-3 py-3 bg-gray-200 ml-[320px] mb-[20px] rounded-full">
-            <CancelIcon />
-          </button>
-        </div>
-        <div className=" bg-white h-[44px] w-[471px] flex justify-center ml-[30px] items-center rounded-xl ">
-          <button className="bg-red-500 w-[227.5px] h-[36px] rounded-xl text-white">
-            {" "}
-            Card
-          </button>
-          <button className="bg-white w-[227.5px] h-[36px] rounded-xl">
-            Order
-          </button>
-        </div>
-        <div className="w-[471px] h-[532px] bg-white rounded-lg ml-[30px] mt-[30px] p-[16px] ">
-          <div className="mb-[20px]">
-            {" "}
-            <p>My cart</p>
-          </div>
-
-          {cartItems.map((item) => (
-            <OrderMiniCard
-              key={item._id}
-              item={item}
-              removeFromCart={removeFromCart}
-            />
-          ))}
-
-          <div className="mt-[47px]">
-            <p> Delivery location</p>
-            <Input
-              type="text"
-              placeholder="Please share your complete address"
-              className="w-[439px] h-[80px]  rounded-md border border-zinc-200 bg-white shadow-sm mt-[8px]"
-            ></Input>
-          </div>
-        </div>
-
-        <div className="w-[471px] h-[276px] bg-white rounded-lg ml-[30px] mt-[30px] p-[16px] ">
-          <p className="pb-[20px]"> Payment info</p>
-          <div className="flex flex-col">
-            <div className="flex flex-row justify-between pb-[8px]">
-              <p>Items </p>
-
-              <p>${grandTotal.toFixed(2)}</p>
-            </div>
-            <div className="flex flex-row justify-between pb-[20px]">
-              <p>Shipping </p>
-
-              <p>${shipping.toFixed(2)}</p>
-            </div>
-            <LineIcon className />
-            <div className="flex flex-row justify-between pt-[20px] pb-[20px]">
-              <p>Total </p>
-
-              <p>${total.toFixed(2)}</p>
-            </div>
-          </div>
-          <button className=" bg-red-500 flex h-[44px] w-[439px] px-8 py-2 justify-center items-center gap-2 self-stretch rounded-full">
-            <p className="text-white flex justify-center items-center">
-              Checkout{" "}
-            </p>
-          </button>
+        <div className="pt-[15px] border-t mt-[16px]">
+          <p>Delivery location</p>
+          <Input
+            type="text"
+            placeholder="Please share your complete address"
+            className="w-full h-[80px] rounded-md border border-zinc-200 bg-white shadow-sm mt-[8px]"
+          />
         </div>
       </div>
-    </>
+
+     
+      <div className="w-[471px] bg-white rounded-lg ml-[30px] mt-[20px] p-[16px]">
+        <p className="pb-[20px]">Payment info</p>
+
+        <div className="flex justify-between pb-[8px]">
+          <p>Items</p>
+          <p>${grandTotal.toFixed(2)}</p>
+        </div>
+
+        <div className="flex justify-between pb-[20px]">
+          <p>Shipping</p>
+          <p>${shipping.toFixed(2)}</p>
+        </div>
+
+        <LineIcon />
+
+        <div className="flex justify-between pt-[20px] pb-[20px]">
+          <p>Total</p>
+          <p>${total.toFixed(2)}</p>
+        </div>
+
+        <button className="bg-red-500 h-[44px] w-full rounded-full text-white"   onClick={() => setIsSuccessOpen(true)}>
+          Checkout
+        </button>
+      </div>
+      </>
+      ) : (
+        <Order/>
+
+)}
+<SuccessDialog
+      open={isSuccessOpen}
+      onClose={() => setIsSuccessOpen(false)}
+      onBackHome={() => {
+        setIsSuccessOpen(false);
+        setIsOrderOpen(false);
+      }}
+      />
+
+
+    </div>
+    
+    
   );
+  
 }
+
+
+
+

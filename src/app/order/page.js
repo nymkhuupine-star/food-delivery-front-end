@@ -70,13 +70,13 @@ export default function OrdersTable() {
 
   return (
     <div>
-       <div className="flex flex-row w-full flex justify-center pb-[20px] bg-zinc-200">
-   <SideBar/>
+       <div className="min-h-screen w-full bg-zinc-200 flex justify-center">
+   <SideBar  className="w-64"/>
 
     
-    <div className="p-6">
+    <div className="p-6 ">
           
-      <div className="text-xl bg-white font-semibold   rounded-t-sm shadow">Orders</div>
+      <div className="text-xl bg-white font-semibold rounded-t-sm shadow px-4 py-3">Orders</div>
 
       <Table className="bg-white rounded-b-xl shadow">
         <TableHeader>
@@ -149,7 +149,6 @@ export default function OrdersTable() {
                   {item.address}
                 </TableCell>
 
-                {/* STATUS BADGE */}
                 <TableCell>
                   <Badge
                     className={`border px-3 py-1 rounded-full ${statusStyle[item.status]}`}
@@ -160,7 +159,6 @@ export default function OrdersTable() {
                 </TableCell>
               </TableRow>
 
-              {/* EXPANDED FOOD LIST ROW */}
               {expandedRow === index && (
                 <TableRow className="bg-gray-50">
                   <TableCell colSpan={7}>
