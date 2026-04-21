@@ -2,10 +2,8 @@
 
 import SideBar from "@/_components/SideBar";
 import DishesCategory from "@/_components/category/DishesCategory";
-import axios from "axios";
 import { useFormik } from "formik";
 import { toast } from "sonner";
-import { SnowCanvas } from "@/_components/SnowCanvas";
 import { useEffect, useState } from "react";
 import { useApp } from "@/_provider/CategoryFoodProvider";
 
@@ -32,21 +30,18 @@ export default function Category() {
   });
 
   return (
-    <>
-      <SnowCanvas />
-      <div className="w-full flex justify-center bg-zinc-200 ">
-        <div className="flex flex-row max-w-[1440px] bg-zinc-200 w-full">
-          <SideBar />
-          <div className="flex flex-col gap-[24px]">
-            <DishesCategory
-              formik={formik}
-              categories={categories}
-              isDialogOpen={isDialogOpen}
-              setIsDialogOpen={setIsDialogOpen}
-            />
-          </div>
+    <div className="min-h-screen bg-[#F4F4F5]">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1280px]">
+        <SideBar />
+        <div className="flex min-w-0 flex-1">
+          <DishesCategory
+            formik={formik}
+            categories={categories}
+            isDialogOpen={isDialogOpen}
+            setIsDialogOpen={setIsDialogOpen}
+          />
         </div>
       </div>
-    </>
+    </div>
   );
 }

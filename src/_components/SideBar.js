@@ -12,47 +12,50 @@ import { usePathname } from "next/navigation";
 
 export default function SideBar() {
   const pathname = usePathname();
+  const navButtonClassName =
+    "h-10 w-full justify-start gap-2.5 rounded-full px-4 text-sm font-medium shadow-none transition";
 
   return (
-   <div className="h-full bg-white w-[205px] flex flex-col shrink-0">
-  <div className="flex flex-row h-[44px] w-[165px] items-center ml-[20px] mt-[36px]">
-    <HeaderLogoTwoIcon />
-    <div className="flex flex-col pl-[10px]">
-      <p className="text-lg text-black">NomNom</p>
-      <p className="text-xs text-gray-500">Swift delivery</p>
-    </div>
-  </div>
+    <aside className="flex min-h-screen w-[180px] shrink-0 flex-col border-r border-[#E4E4E7] bg-white px-5 py-8">
+      <div className="flex h-[44px] items-center">
+        <HeaderLogoTwoIcon />
+        <div className="pl-[10px]">
+          <p className="text-lg font-semibold text-[#09090B]">NomNom</p>
+          <p className="text-xs text-[#71717A]">Swift delivery</p>
+        </div>
+      </div>
 
- {/* CATEGORY */}
-      <Link href="/category">
-        <Button
-          className={`flex flex-row items-center justify-start gap-2 h-[40px] w-[165px] rounded-xl ml-[20px] mt-[40px]
-            ${pathname === "/category" ? "bg-stone-950 text-white" : "bg-white text-black"}
+      <div className="mt-10 flex flex-col gap-2">
+        <Link href="/category" className="block w-full">
+          <Button
+            className={`${navButtonClassName}
+            ${pathname === "/category" ? "bg-stone-950 text-white hover:bg-stone-950" : "bg-transparent text-black hover:bg-[#F4F4F5]"}
           `}
-        >
-          
+          >
             {pathname === "/category" ? <MenuIcon /> : <MenuIconBlack />}
-          <p>Food menu</p>
-        </Button>
-      </Link>
+            <p>Food menu</p>
+          </Button>
+        </Link>
 
-      {/* ORDER */}
-      <Link href="/order">
-        <Button
-          className={`flex flex-row items-center justify-start gap-2 h-[40px] w-[165px] rounded-2xl ml-[20px] mt-[24px]
-            ${pathname === "/order" ? "bg-stone-950 text-white" : "bg-white text-black"}
+        <Link href="/order" className="block w-full">
+          <Button
+            className={`${navButtonClassName}
+            ${pathname === "/order" ? "bg-stone-950 text-white hover:bg-stone-950" : "bg-transparent text-black hover:bg-[#F4F4F5]"}
           `}
-        >
+          >
             {pathname === "/order" ? <TruckIconWhite /> : <TruckIcon />}
-          <p>Orders</p>
-        </Button>
-      </Link>
+            <p>Orders</p>
+          </Button>
+        </Link>
+      </div>
 
-  <Button className="flex flex-row items-center justify-start gap-2 h-[40px] w-[165px] bg-white rounded-xl text-black ml-[20px] mt-[24px]">
-    <SettingsIcon /><p>Settings</p>
-  </Button>
-</div>
-
+      <Button
+        className={`${navButtonClassName} mt-auto bg-transparent text-black hover:bg-[#F4F4F5]`}
+      >
+        <SettingsIcon />
+        <p>Settings</p>
+      </Button>
+    </aside>
   );
 }
 

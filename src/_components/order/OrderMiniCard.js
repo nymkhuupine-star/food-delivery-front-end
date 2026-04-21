@@ -1,14 +1,18 @@
 "use client";
 
-import LineIcon from "@/_icons/LineIcon";
 import Image from "next/image";
-import CancelIcon from "@/_icons/CancelIcon";
+import { Minus, Plus, X } from "lucide-react";
 
-export default function OrderMiniCard({ item, removeFromCart }) {
+export default function OrderMiniCard({
+  item,
+  removeFromCart,
+  increaseCartItemQuantity,
+  decreaseCartItemQuantity,
+}) {
   return (
-    <>
-      <div className="flex gap-4">
-        <div className="relative w-[124px] h-[120px] rounded overflow-hidden">
+    <div className="border-b border-dashed border-[#D4D4D8] pb-5 last:border-b-0 last:pb-0">
+      <div className="flex gap-3">
+        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-[#F4F4F5]">
           <Image
             src={item.image}
             alt={item.foodName}
@@ -17,29 +21,56 @@ export default function OrderMiniCard({ item, removeFromCart }) {
           />
         </div>
 
-        <div className="flex flex-col flex-1">
-          <div className="flex justify-between">
-            <p className="font-medium">{item.foodName}</p>
-            <button
-              onClick={() => removeFromCart(item._id)}
-              className="bg-gray-200 rounded-full p-2"
-            >
-              <CancelIcon />
-            </button>
-          </div>
+        <div className="flex min-w-0 flex-1 gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="truncate text-lg font-semibold leading-7 text-[#EF4444]">
+                  {item.foodName}
+                </p>
+                <p className="mt-1 text-xs leading-4 text-[#52525B]">
+                  {item.ingredients}
+                </p>
+              </div>
 
-          <p className="text-sm text-gray-500">{item.ingredients}</p>
+              <button
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#FCA5A5] text-[#EF4444] transition hover:bg-[#FEF2F2]"
+                onClick={() => removeFromCart(item._id)}
+                type="button"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
 
-          <div className="flex justify-between mt-3">
-            <p className="text-sm">
-              {item.qty} x ${item.price}
-            </p>
-            <p className="font-semibold">${item.totalPrice}</p>
+            <div className="mt-4 flex items-end justify-between gap-4">
+              <div className="flex items-center gap-4 text-[#18181B]">
+                <button
+                  className="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-[#F4F4F5] disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={item.qty <= 1}
+                  onClick={() => decreaseCartItemQuantity(item._id)}
+                  type="button"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <span className="min-w-4 text-center text-2xl font-medium leading-none">
+                  {item.qty}
+                </span>
+                <button
+                  className="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-[#F4F4F5]"
+                  onClick={() => increaseCartItemQuantity(item._id)}
+                  type="button"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+
+              <p className="shrink-0 text-[28px] font-semibold leading-none text-[#18181B]">
+                ${Number(item.totalPrice).toFixed(2)}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-
-      <LineIcon className="my-4" />
-    </>
+    </div>
   );
 }

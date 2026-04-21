@@ -1,145 +1,257 @@
-
-
 "use client";
 
 import CancelIcon from "@/_icons/CancelIcon";
-import LineIcon from "@/_icons/LineIcon";
 import ShoppingCardIcon from "@/_icons/ShoppingCartIcon";
-
-import { Input } from "@/components/ui/input";
-import OrderMiniCard from "./OrderMiniCard";
-import { useCart } from "@/_provider/CartProvider";
 import FoodIcon from "@/_icons/FoodIcon";
-import { useState } from "react";
+import { useCart } from "@/_provider/CartProvider";
+import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
+import LineIcon from "@/_icons/LineIcon";
+import OrderMiniCard from "./OrderMiniCard";
 import Order from "./Order";
 import SuccessDialog from "../dialog/SuccessDialog";
-
-
+import LoginRequiredDialog from "../dialog/LoginRequiredDialog";
+import {
+  addStoredOrder,
+  createStoredOrder,
+  getCurrentUser,
+  updateCurrentUser,
+} from "@/lib/orderStorage";
 
 export default function OrderDetail() {
-  const { cartItems, removeFromCart, isOrderOpen, setIsOrderOpen } = useCart();
+  const {
+    cartItems,
+    removeFromCart,
+    increaseCartItemQuantity,
+    decreaseCartItemQuantity,
+    clearCart,
+    isOrderOpen,
+    setIsOrderOpen,
+  } = useCart();
   const [isCardView, setIsCardView] = useState(true);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+  const [isLoginRequiredOpen, setIsLoginRequiredOpen] = useState(false);
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [addressError, setAddressError] = useState("");
+
+  useEffect(() => {
+    if (!isOrderOpen) return;
+
+    const currentUser = getCurrentUser();
+
+    if (currentUser?.address?.trim()) {
+      setDeliveryAddress((prev) => prev || currentUser.address.trim());
+    }
+  }, [isOrderOpen]);
 
   if (!isOrderOpen) return null;
 
-  
+  const validateAddress = () => {
+    if (!deliveryAddress.trim()) {
+      setAddressError("Please complete your address");
+      return false;
+    }
+
+    setAddressError("");
+    return true;
+  };
+
+  const handleAddressChange = (event) => {
+    setDeliveryAddress(event.target.value);
+
+    if (addressError && event.target.value.trim()) {
+      setAddressError("");
+    }
+  };
+
+  const handleCheckout = () => {
+    if (cartItems.length === 0) return;
+    if (!validateAddress()) return;
+
+    const token = window.localStorage.getItem("token");
+
+    if (!token) {
+      setIsLoginRequiredOpen(true);
+      return;
+    }
+
+    const currentUser = getCurrentUser();
+    const normalizedAddress = deliveryAddress.trim();
+    const nextOrder = createStoredOrder({
+      cartItems,
+      deliveryAddress: normalizedAddress,
+      user: currentUser,
+      shipping,
+    });
+
+    addStoredOrder(nextOrder);
+
+    if (currentUser) {
+      updateCurrentUser({ address: normalizedAddress });
+    }
+
+    clearCart();
+    setIsSuccessOpen(true);
+  };
 
   const grandTotal = cartItems.reduce(
-    (sum, item) => sum + item.totalPrice,
+    (sum, item) => sum + Number(item.totalPrice),
     0
   );
   const shipping = 5.99;
   const total = grandTotal + shipping;
+  const isAddressInvalid = Boolean(addressError);
 
   return (
-    <div className="bg-neutral-700 rounded-s-2xl w-[535px] h-[1050px] flex flex-col">
-     
-      <div className="flex items-center pl-[34.5px] pt-[8px]">
+    <div className="flex h-screen w-full max-w-[535px] flex-col overflow-y-auto rounded-s-[28px] bg-[#3F3F46] px-5 py-3">
+      <div className="flex items-center px-2 pt-1">
         <ShoppingCardIcon />
-        <p className="text-white ml-[10px]">Order detail</p>
+        <p className="ml-[10px] text-white">Order detail</p>
 
         <button
+          className="ml-auto rounded-full border border-white/15 bg-white/10 p-2.5 transition hover:bg-white/15"
           onClick={() => setIsOrderOpen(false)}
-          className="ml-auto mr-[20px] px-3 py-3 bg-gray-200 rounded-full"
+          type="button"
         >
           <CancelIcon />
         </button>
       </div>
 
-      <div className="bg-white h-[44px] w-[471px] flex ml-[30px] mt-[12px] rounded-xl">
-        <button className={`w-1/2 h-[36px] m-[4px] rounded-xl ${isCardView ? "bg-red-500 text-white" : ""}`}
-        onClick={() => setIsCardView(true)}>
+      <div className="mt-3 flex rounded-full bg-white p-1 shadow-sm">
+        <button
+          className={`h-9 w-1/2 rounded-full text-sm font-medium transition ${
+            isCardView ? "bg-[#EF4444] text-white" : "text-[#3F3F46]"
+          }`}
+          onClick={() => setIsCardView(true)}
+          type="button"
+        >
           Card
         </button>
-        <button  className={`w-1/2 h-[36px] m-[4px] rounded-xl ${!isCardView ? "bg-red-500 text-white" : ""}`}
-        onClick={() => setIsCardView(false)} >
+        <button
+          className={`h-9 w-1/2 rounded-full text-sm font-medium transition ${
+            !isCardView ? "bg-[#EF4444] text-white" : "text-[#3F3F46]"
+          }`}
+          onClick={() => setIsCardView(false)}
+          type="button"
+        >
           Order
         </button>
       </div>
 
-    {isCardView ? (
-      <>
-      <div className="w-[471px] bg-white rounded-lg ml-[30px] mt-[30px] p-[16px] flex flex-col h-[620px]">
-        <p className="mb-[16px]">My cart</p>
+      {isCardView ? (
+        <>
+          <div className="mt-3 flex min-h-[620px] flex-col rounded-[24px] bg-white px-4 py-4 shadow-[0_16px_45px_rgba(15,23,42,0.14)]">
+            <p className="text-sm font-medium text-[#3F3F46]">My cart</p>
 
-   
-        <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-3 pr-2">
-          {cartItems.length === 0 ? (
-            <div className="w-[439px] h-[182px] bg-zinc-100 rounded-xl flex flex-col justify-center items-center p-[12px]
-">
-  <FoodIcon/>
-  <p className="text-zinc-950 text-center text-base font-bold leading-7"> Your cart is empthy   </p>
-  <p className="text-zinc-500 text-center text-xs font-normal leading-4" >Hungry? 🍔 Add some delicious dishes to your cart and satisfy your cravings!</p>
-</div>
-          ) : (
-            cartItems.map((item) => (
-              <OrderMiniCard
-                key={item._id}
-                item={item}
-                removeFromCart={removeFromCart}
+            <div className="mt-4 flex-1 space-y-5 overflow-y-auto overflow-x-hidden pr-1">
+              {cartItems.length === 0 ? (
+                <div className="flex h-[182px] flex-col items-center justify-center rounded-[20px] bg-[#F4F4F5] p-4 text-center">
+                  <FoodIcon />
+                  <p className="mt-3 text-base font-bold leading-7 text-zinc-950">
+                    Your cart is empty
+                  </p>
+                  <p className="text-xs leading-4 text-zinc-500">
+                    Hungry? Add some delicious dishes to your cart and satisfy
+                    your cravings!
+                  </p>
+                </div>
+              ) : (
+                cartItems.map((item) => (
+                  <OrderMiniCard
+                    key={item._id}
+                    item={item}
+                    removeFromCart={removeFromCart}
+                    increaseCartItemQuantity={increaseCartItemQuantity}
+                    decreaseCartItemQuantity={decreaseCartItemQuantity}
+                  />
+                ))
+              )}
+            </div>
+
+            <div className="mt-5 border-t border-[#E4E4E7] pt-4">
+              <p className="text-[15px] font-medium text-[#71717A]">
+                Delivery location
+              </p>
+              <Input
+                aria-invalid={isAddressInvalid}
+                className={`mt-3 h-[56px] rounded-xl border bg-white px-4 text-sm shadow-none ${
+                  isAddressInvalid
+                    ? "border-[#F87171] text-[#18181B] placeholder:text-[#A1A1AA] focus-visible:border-[#F87171] focus-visible:ring-[#FCA5A5]/40"
+                    : "border-[#E4E4E7] text-[#18181B] placeholder:text-[#A1A1AA] focus-visible:border-[#EF4444] focus-visible:ring-[#FCA5A5]/40"
+                }`}
+                onBlur={validateAddress}
+                onChange={handleAddressChange}
+                placeholder="Please complete your address"
+                type="text"
+                value={deliveryAddress}
               />
-            ))
-          )}
-        </div>
+              {isAddressInvalid && (
+                <p className="mt-2 text-sm text-[#EF4444]">{addressError}</p>
+              )}
+            </div>
+          </div>
 
-        <div className="pt-[15px] border-t mt-[16px]">
-          <p>Delivery location</p>
-          <Input
-            type="text"
-            placeholder="Please share your complete address"
-            className="w-full h-[80px] rounded-md border border-zinc-200 bg-white shadow-sm mt-[8px]"
-          />
-        </div>
-      </div>
+          <div className="mt-4 rounded-[24px] bg-white px-4 py-5 shadow-[0_16px_45px_rgba(15,23,42,0.14)]">
+            <p className="text-[15px] font-semibold text-[#71717A]">
+              Payment info
+            </p>
 
-     
-      <div className="w-[471px] bg-white rounded-lg ml-[30px] mt-[20px] p-[16px]">
-        <p className="pb-[20px]">Payment info</p>
+            <div className="mt-5 flex items-center justify-between text-base text-[#71717A]">
+              <p>Items</p>
+              <p className="font-semibold text-[#18181B]">
+                ${grandTotal.toFixed(2)}
+              </p>
+            </div>
 
-        <div className="flex justify-between pb-[8px]">
-          <p>Items</p>
-          <p>${grandTotal.toFixed(2)}</p>
-        </div>
+            <div className="mt-3 flex items-center justify-between text-base text-[#71717A]">
+              <p>Shipping</p>
+              <p className="font-semibold text-[#18181B]">
+                ${shipping.toFixed(2)}
+              </p>
+            </div>
 
-        <div className="flex justify-between pb-[20px]">
-          <p>Shipping</p>
-          <p>${shipping.toFixed(2)}</p>
-        </div>
+            <LineIcon className="mt-5 w-full" />
 
-        <LineIcon />
+            <div className="mt-5 flex items-center justify-between text-[15px]">
+              <p className="text-[#71717A]">Total</p>
+              <p className="text-[28px] font-semibold leading-none text-[#18181B]">
+                ${total.toFixed(2)}
+              </p>
+            </div>
 
-        <div className="flex justify-between pt-[20px] pb-[20px]">
-          <p>Total</p>
-          <p>${total.toFixed(2)}</p>
-        </div>
-
-        <button className="bg-red-500 h-[44px] w-full rounded-full text-white"   onClick={() => setIsSuccessOpen(true)}>
-          Checkout
-        </button>
-      </div>
-      </>
+            <button
+              className={`mt-5 h-[44px] w-full rounded-full text-sm font-medium text-white transition ${
+                cartItems.length === 0
+                  ? "cursor-not-allowed bg-[#FCA5A5]"
+                  : "bg-[#EF4444] hover:bg-[#DC2626]"
+              }`}
+              disabled={cartItems.length === 0}
+              onClick={handleCheckout}
+              type="button"
+            >
+              Checkout
+            </button>
+          </div>
+        </>
       ) : (
-        <Order/>
+        <Order />
+      )}
 
-)}
-<SuccessDialog
-      open={isSuccessOpen}
-      onClose={() => setIsSuccessOpen(false)}
-      onBackHome={() => {
-        setIsSuccessOpen(false);
-        setIsOrderOpen(false);
-      }}
+      <SuccessDialog
+        open={isSuccessOpen}
+        onClose={() => setIsSuccessOpen(false)}
+        onBackHome={() => {
+          setIsSuccessOpen(false);
+          setIsOrderOpen(false);
+          setIsCardView(true);
+          setAddressError("");
+          setDeliveryAddress("");
+        }}
       />
-
-
+      <LoginRequiredDialog
+        open={isLoginRequiredOpen}
+        onClose={() => setIsLoginRequiredOpen(false)}
+      />
     </div>
-    
-    
   );
-  
 }
-
-
-
-

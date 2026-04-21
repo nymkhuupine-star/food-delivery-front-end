@@ -11,7 +11,7 @@ import HeroSection from "@/_features/HeroSection";
 import { useCart } from "@/_provider/CartProvider";
 
 export default function Home() {
-  const { isOrderOpen, setIsOrderOpen } = useCart();
+  const { isOrderOpen } = useCart();
   return (
     <div>
       <SnowCanvas />
@@ -19,8 +19,8 @@ export default function Home() {
       <HeroSection className=" flex items-center justify-center" />
       <HomeFoodList />
       {isOrderOpen && (
-        <div className="absolute top-0 right-0">
-          <OrderDetail setOpen={setIsOrderOpen} />
+        <div className="fixed inset-y-0 right-0 z-40 w-full max-w-[535px]">
+          <OrderDetail />
         </div>
       )}
       <Footer />

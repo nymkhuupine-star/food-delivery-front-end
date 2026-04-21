@@ -1,17 +1,12 @@
 "use client";
 import LoginIcon from "@/_icons/loginIcon";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const SignUpStepOne = ({ onNext, formik }) => {
-  const router = useRouter();
-
   const { values, handleChange, handleBlur, errors, touched, handleSubmit } =
     formik;
-  console.log("values", values);
 
   // const handleNextStep = () => {
   //   router.push(`/sign-up/step2`);

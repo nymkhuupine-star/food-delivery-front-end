@@ -38,7 +38,7 @@ function DialogOverlay({ className, ...props }) {
 function DialogContent({ className, children, showCloseButton = true, ...props }) {
   return (
     <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay className="fixed inset-0 bg-transparent" />
+      <DialogOverlay className="fixed inset-0 bg-black/30 backdrop-blur-[2px]" />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(

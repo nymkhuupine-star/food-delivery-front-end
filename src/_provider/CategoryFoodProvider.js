@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { apiUrl } from "@/lib/api";
 
 const AppContext = createContext(null);
 
@@ -18,9 +19,7 @@ export const CategoryFoodProvider = ({ children }) => {
   const fetchCategories = async () => {
     setCatLoading(true);
     try {
-      const { data } = await axios.get(
-        "https://food-delivery-back-end-gq7z.onrender.com/category"
-      );
+      const { data } = await axios.get(apiUrl("/category"));
       setCategories(data);
     } finally {
       setCatLoading(false);
@@ -28,36 +27,26 @@ export const CategoryFoodProvider = ({ children }) => {
   };
 
   const createCategory = async (payload) => {
-    const { data } = await axios.post(
-      "https://food-delivery-back-end-gq7z.onrender.com/category",
-      payload
-    );
+    const { data } = await axios.post(apiUrl("/category"), payload);
     setCategories((prev) => [data, ...prev]);
     return data;
   };
 
   const updateCategory = async (id, payload) => {
-    const { data } = await axios.put(
-      `https://food-delivery-back-end-gq7z.onrender.com/category/${id}`,
-      payload
-    );
+    const { data } = await axios.put(apiUrl(`/category/${id}`), payload);
     setCategories((prev) => prev.map((c) => (c._id === id ? data : c)));
     return data;
   };
 
   const deleteCategory = async (id) => {
-    await axios.delete(
-      `https://food-delivery-back-end-gq7z.onrender.com/category/${id}`
-    );
+    await axios.delete(apiUrl(`/category/${id}`));
     setCategories((prev) => prev.filter((c) => c._id !== id));
   };
 
   const fetchFood = async () => {
     setFoodLoading(true);
     try {
-      const { data } = await axios.get(
-        "https://food-delivery-back-end-gq7z.onrender.com/food"
-      );
+      const { data } = await axios.get(apiUrl("/food"));
       setFoods(data);
     } finally {
       setFoodLoading(false);
@@ -69,29 +58,24 @@ export const CategoryFoodProvider = ({ children }) => {
   };
 
   const createFood = async (payload) => {
-    const { data } = await axios.post(
-      "https://food-delivery-back-end-gq7z.onrender.com/food",
-      payload
-    );
+    const { data } = await axios.post(apiUrl("/food"), payload);
     setFoods((prev) => [data, ...prev]);
     triggerRefresh();
     return data;
   };
 
   const updateFood = async (id, payload) => {
-    const { data } = await axios.put(
-      `https://food-delivery-back-end-gq7z.onrender.com/food/${id}`,
-      payload
+    const { data } = await axios.put(apiUrl(`/food/${id}`), payload);
+    const nextFood = data?._id ? data : { ...payload, _id: id };
+    setFoods((prev) =>
+      prev.map((f) => (f._id === id ? { ...f, ...nextFood } : f))
     );
-    setFoods((prev) => prev.map((f) => (f._id === id ? data : f)));
     triggerRefresh();
-    return data;
+    return nextFood;
   };
 
   const deleteFood = async (id) => {
-    await axios.delete(
-      `https://food-delivery-back-end-gq7z.onrender.com/food/${id}`
-    );
+    await axios.delete(apiUrl(`/food/${id}`));
     setFoods((prev) => prev.filter((f) => f._id !== id));
     triggerRefresh();
   };

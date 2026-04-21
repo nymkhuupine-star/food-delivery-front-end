@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { apiUrl } from "@/lib/api";
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
@@ -36,10 +37,10 @@ export default function SignUp() {
 
   const createUser = async (email, password) => {
   try {
-    const response = await axios.post(
-      "https://food-delivery-back-end-gq7z.onrender.com/authentication/sign-up",
-      { email, password }
-    );
+    const response = await axios.post(apiUrl("/authentication/sign-up"), {
+      email,
+      password,
+    });
 
     toast.success("Account created successfully. Please log in.");
     router.push("/login");

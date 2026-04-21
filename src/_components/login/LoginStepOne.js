@@ -1,6 +1,5 @@
 "use client";
 import LoginIcon from "@/_icons/loginIcon";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -8,6 +7,12 @@ import Link from "next/link";
 const LoginStepOne = ({ formik }) => {
   const { values, handleChange, handleBlur, errors, touched, handleSubmit } =
     formik;
+  const isSubmitDisabled =
+    !values.email ||
+    !values.password ||
+    Boolean(errors.email) ||
+    Boolean(errors.password);
+
   return (
     <div className=" flex flex-row justify-center items-center gap-[48px] h-screen">
       <div className="flex flex-col">
@@ -63,20 +68,18 @@ const LoginStepOne = ({ formik }) => {
           <p className="underline  text-sm pb-[24px]">Forgot password ?</p>
         </div>
 
-       <Button
-  className={`w-[416px] h-[36px] text-sm transition-colors
-    ${
-      !errors.confirmPassword && values.confirmPassword
-        ? "bg-[#18181B] text-white"
-        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-    }
-  `}
-  variant="secondary"
-  onClick={handleSubmit}
-  disabled={errors.confirmPassword || !values.confirmPassword}
->
-  Let's Go
-</Button>
+        <Button
+          className={`w-[416px] h-[36px] text-sm transition-colors ${
+            isSubmitDisabled
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-[#18181B] text-white"
+          }`}
+          variant="secondary"
+          onClick={handleSubmit}
+          disabled={isSubmitDisabled}
+        >
+          Let's Go
+        </Button>
 
         <div className="flex flex-row pt-[24px] gap-[5px]">
           <p className="pl-[85px] text-base">Don’t have an account?</p>

@@ -12,18 +12,15 @@ import Image from "next/image";
 import AddImageIcon from "@/_icons/AddImageIcon";
 import { useApp } from "@/_provider/CategoryFoodProvider";
 
-import MiniFoodCard from "./MiniFoodCard";
-
 const UPLOAD_PRESET = "food-delivery";
 const CLOUD_NAME = "dxzpmljjs";
 
 export default function AddFoodCard({ category }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newDish, setNewDish] = useState([]);
   const [logoUrl, setLogoUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  const { Foods, createFood, deleteFood, fetchFood, triggerRefresh } = useApp();
+  const { createFood, fetchFood, triggerRefresh } = useApp();
 
   const [preview, setPreview] = useState(null);
 
@@ -34,11 +31,11 @@ export default function AddFoodCard({ category }) {
       ingredients: "",
       image: null,
     },
-    onSubmit: async (values, { resetForm }) => {
-      await handleAddFood(values, resetForm);
+    onSubmit: async () => {
+      await handleAddFood();
     },
   });
-  const { values, handleChange, handleBlur, handleSubmit, resetForm } = formik;
+  const { values, handleChange, handleBlur } = formik;
 
   const handleAddFood = async () => {
     const dishName = values.dishName.trim();
@@ -108,52 +105,37 @@ export default function AddFoodCard({ category }) {
   };
 
   return (
-    <div className="">
-      <div className="flex flex-row  gap-[13px]">
-        <div
-          className="bg-white w-[270.75px] h-[241px] rounded-[20px] border flex flex-col"
-          style={{
-            borderStyle: "dashed",
-            borderColor: "#EF4444",
-          }}
+    <div>
+      <div
+        className="flex h-[241px] w-full flex-col items-center justify-center rounded-[20px] border bg-white px-6 text-center"
+        style={{
+          borderStyle: "dashed",
+          borderColor: "#FCA5A5",
+        }}
+      >
+        <Button
+          className="mb-5 h-[48px] w-[48px] rounded-full bg-red-500 p-0 hover:bg-red-600"
+          onClick={() => setIsDialogOpen(true)}
         >
-          <div className="flex flex-col pl-[110px] pt-[70px] pr-[110px]">
-            <Button
-              className="bg-red-500 h-[50px] w-[50px] rounded-4xl"
-              onClick={() => setIsDialogOpen(true)}
-            >
-              <PlusIcon />
-            </Button>
-          </div>
+          <PlusIcon className="h-5 w-5" />
+        </Button>
 
-          <p className="flex justify-center pt-[10px] items-center">
-            Add new Dish to {category.categoryName}
-          </p>
-        </div>
-        <div className="flex flex-row  gap-[13px] ">
-          {newDish.map((dish, index) => (
-            <MiniFoodCard
-              key={index}
-              image={dish.image}
-              name={dish.dishName}
-              price={dish.price}
-              description={dish.description}
-            />
-          ))}
-        </div>
+        <p className="max-w-[142px] text-base font-medium leading-6 text-[#18181B]">
+          Add new Dish to {category.categoryName}
+        </p>
       </div>
 
       {isDialogOpen && (
-        <div className="fixed inset-0 bg-white/50 flex items-center justify-center z-50">
-          <div className="w-[460px] h-[592px] bg-white rounded-lg p-5 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 backdrop-blur-[2px]">
+          <div className="h-[592px] w-[460px] rounded-[24px] bg-white p-5 shadow-[0_32px_64px_rgba(15,23,42,0.16)]">
             <div className="flex flex-row justify-between">
-              <h3 className="text-lg font-bold">
+              <h3 className="text-lg font-semibold">
                 Add new Dish to {category.categoryName}
               </h3>
 
               <button
                 onClick={() => setIsDialogOpen(false)}
-                className="px-3 py-3 bg-gray-200 text-gray-700 rounded-full"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F4F4F5] text-gray-700"
               >
                 <CancelIcon />
               </button>
@@ -169,7 +151,7 @@ export default function AddFoodCard({ category }) {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="Type food name"
-                  className="w-[194px] h-[38px] px-4 py-2 border border-neutral-400 rounded-lg mb-4"
+                  className="mb-4 h-[38px] w-[194px] rounded-lg border border-neutral-300 px-4 py-2"
                 />
               </div>
 
@@ -182,7 +164,7 @@ export default function AddFoodCard({ category }) {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="Enter price..."
-                  className="w-[194px] h-[38px] px-4 py-2 border border-neutral-400 rounded-lg mb-4"
+                  className="mb-4 h-[38px] w-[194px] rounded-lg border border-neutral-300 px-4 py-2"
                 />
               </div>
             </div>
@@ -195,7 +177,7 @@ export default function AddFoodCard({ category }) {
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="List ingredients..."
-              className="w-[412px] h-[90px] mb-4"
+              className="mb-4 h-[90px] w-[412px]"
             />
 
             <p className="text-sm mb-1">Food image</p>

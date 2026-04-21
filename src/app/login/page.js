@@ -1,11 +1,12 @@
 "use client";
 import LoginStepOne from "@/_components/login/LoginStepOne";
-import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { apiUrl } from "@/lib/api";
+import { setCurrentUser } from "@/lib/orderStorage";
 
 export default function Login() {
   const router = useRouter();
@@ -17,27 +18,19 @@ export default function Login() {
       .required("Required"),
   });
 
-  const [message, setMessage] = useState("");
-
-  const createUser = async (email, password) => {
-    console.log(email, password);
+  const loginUser = async (email, password) => {
     try {
-      const response = await axios.post(
-        "https://food-delivery-back-end-gq7z.onrender.com/authentication/login",
-        {
-          email: email,
-          password: password,
-        }
-      );
-      router.push("/");
-     
+      const response = await axios.post(apiUrl("/authentication/login"), {
+        email,
+        password,
+      });
+
       localStorage.setItem("token", response.data.token);
-     toast.success("Login successful");
+      setCurrentUser(response.data.user);
+      toast.success("Login successful");
+      router.replace("/");
     } catch (error) {
-       toast.error(
-      error.response?.data?.message ||
-      "Invalid email or password"
-    );
+      toast.error(error.response?.data?.message || "Invalid email or password");
     }
   };
 
@@ -49,7 +42,7 @@ export default function Login() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       const { email, password } = values;
-      await createUser(email, password);
+      await loginUser(email, password);
     },
   });
 

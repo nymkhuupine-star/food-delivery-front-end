@@ -9,6 +9,7 @@ import PlusIcon from "@/_icons/PlusIcon";
 import { Button } from "@/components/ui/button";
 import RedPlusIcon from "@/_icons/RedPlusIcon";
 import HomeFoodDialog from "@/_components/dialog/HomeFoodDialog";
+import { apiUrl } from "@/lib/api";
 
 export default function FoodCard({ categoryId }) {
   const [foods, setFoods] = useState([]);
@@ -19,9 +20,7 @@ export default function FoodCard({ categoryId }) {
 
   useEffect(() => {
     const getFoodCard = async () => {
-      const res = await axios.get(
-        `https://food-delivery-back-end-gq7z.onrender.com/food/category/${categoryId}`
-      );
+      const res = await axios.get(apiUrl(`/food/category/${categoryId}`));
       setFoods(res.data);
     };
     getFoodCard();

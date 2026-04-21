@@ -1,103 +1,206 @@
 "use client";
 
-import CancelIcon from "@/_icons/CancelIcon";
+import FoodIcon from "@/_icons/FoodIcon";
 import LineIcon from "@/_icons/LineIcon";
-import ShoppingCardIcon from "@/_icons/ShoppingCartIcon";
-
-import { useCart } from "@/_provider/CartProvider";
 import OrderFoodIcon from "@/_icons/OrderFoodIcon";
 import { Badge } from "@/components/ui/badge";
-import { useEffect } from "react";
-import FoodIcon from "@/_icons/FoodIcon";
+import {
+  getCurrentUser,
+  getStoredOrders,
+  ORDERS_UPDATED_EVENT,
+  USER_UPDATED_EVENT,
+} from "@/lib/orderStorage";
+import { useEffect, useMemo, useState } from "react";
+
+const STATUS_STYLES = {
+  Pending: "border-[#F87171] bg-white text-[#18181B]",
+  Delivered: "border-[#86EFAC] bg-white text-[#18181B]",
+  Cancelled: "border-[#E4E4E7] bg-white text-[#18181B]",
+};
 
 export default function Order() {
-  const { cartItems, removeFromCart, isOrderOpen, setIsOrderOpen } = useCart();
-
-  const shipping = cartItems.length > 0 ? 5.99 : 0;
-  const grandTotal = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
-  const total = grandTotal + shipping;
+  const [orders, setOrders] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    setIsOrderOpen(true);
+    const syncData = () => {
+      setOrders(getStoredOrders());
+      setCurrentUser(getCurrentUser());
+    };
+
+    syncData();
+
+    window.addEventListener(ORDERS_UPDATED_EVENT, syncData);
+    window.addEventListener(USER_UPDATED_EVENT, syncData);
+    window.addEventListener("storage", syncData);
+
+    return () => {
+      window.removeEventListener(ORDERS_UPDATED_EVENT, syncData);
+      window.removeEventListener(USER_UPDATED_EVENT, syncData);
+      window.removeEventListener("storage", syncData);
+    };
   }, []);
 
-  if (!isOrderOpen) return null;
+  const customerOrders = useMemo(() => {
+    if (!currentUser?._id && !currentUser?.email) {
+      return [];
+    }
+
+    return orders.filter((order) => {
+      if (currentUser._id && order.userId === currentUser._id) return true;
+      if (currentUser.email && order.customerEmail === currentUser.email) {
+        return true;
+      }
+
+      return false;
+    });
+  }, [orders, currentUser]);
+
+  const pendingOrdersCount = customerOrders.filter(
+    (order) => order.status === "Pending"
+  ).length;
+  const grandTotal = customerOrders.reduce(
+    (sum, order) => sum + Number(order.total),
+    0
+  );
+  const itemsTotal = customerOrders.reduce(
+    (sum, order) => sum + Number(order.itemsTotal ?? order.total),
+    0
+  );
+  const shipping = customerOrders.reduce(
+    (sum, order) => sum + Number(order.shipping ?? 0),
+    0
+  );
+  const badgeLabel =
+    pendingOrdersCount > 0
+      ? `${pendingOrdersCount} pending`
+      : customerOrders.length > 0
+        ? "Completed"
+        : "No orders";
+  const badgeClassName =
+    pendingOrdersCount > 0 ? STATUS_STYLES.Pending : STATUS_STYLES.Delivered;
 
   return (
-    <div className="bg-neutral-700 rounded-s-2xl w-[535px] h-[1050px] flex flex-col">
-
-     
-      <div className="w-[471px] bg-white rounded-lg ml-[30px] mt-[30px] p-[16px] flex flex-col h-[620px]">
-
-        <div className="mb-[16px] flex justify-between items-center">
-          <p>Order history</p>
-          <Badge className="rounded-lg border border-red-500 bg-white text-black">
-            Pending
+    <>
+      <div className="mt-3 flex min-h-[620px] flex-col rounded-[24px] bg-white px-4 py-4 shadow-[0_16px_45px_rgba(15,23,42,0.14)]">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <p className="text-[15px] font-semibold text-[#18181B]">
+            Order history
+          </p>
+          <Badge
+            className={`rounded-full px-3 py-1 shadow-none ${badgeClassName}`}
+          >
+            {badgeLabel}
           </Badge>
         </div>
 
-
-        <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-3 pr-2">
-          {cartItems.length === 0 ? (
-            <div className="w-[439px]  p-[12px] h-[182px] bg-zinc-100 rounded-xl flex flex-col justify-center items-center
-">
-  <FoodIcon/>
-  <p className="text-zinc-950 text-center text-base font-bold leading-7"> No Orders Yet?  </p>
-  <p className="text-zinc-500 text-center text-xs font-normal leading-4" >🍕 "You haven't placed any orders yet. Start exploring our menu and satisfy your cravings!"</p>
-</div>
+        <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pr-1">
+          {customerOrders.length === 0 ? (
+            <div className="flex h-[182px] flex-col items-center justify-center rounded-[20px] bg-[#F4F4F5] p-4 text-center">
+              <FoodIcon />
+              <p className="mt-3 text-base font-bold leading-7 text-zinc-950">
+                No orders yet?
+              </p>
+              <p className="text-xs leading-4 text-zinc-500">
+                You haven&apos;t placed any orders yet. Start exploring our menu
+                and satisfy your cravings!
+              </p>
+            </div>
           ) : (
-            cartItems.map((item) => (
+            customerOrders.map((order) => (
               <div
-                key={item._id}
-                className="flex justify-between items-center"
+                key={order.id}
+                className="rounded-2xl border border-[#F4F4F5] px-3 py-3"
               >
-                <div className="flex items-center gap-2">
-                  <OrderFoodIcon />
-                  <p>{item.foodName}</p>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FFF1F2] text-[#EF4444]">
+                      <OrderFoodIcon />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-[#18181B]">
+                        {order.foods.length} foods ordered
+                      </p>
+                      <p className="mt-1 text-xs text-[#71717A]">
+                        {order.address}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Badge
+                    className={`rounded-full px-3 py-1 shadow-none ${
+                      STATUS_STYLES[order.status] || STATUS_STYLES.Pending
+                    }`}
+                  >
+                    {order.status}
+                  </Badge>
                 </div>
 
-                <p>x {item.qty}</p>
+                <div className="mt-3 space-y-2">
+                  {order.foods.map((food, index) => (
+                    <div
+                      key={`${order.id}-${food.name}-${index}`}
+                      className="flex items-center justify-between gap-3 text-sm"
+                    >
+                      <div className="flex min-w-0 items-center gap-2">
+                        <div className="h-2 w-2 shrink-0 rounded-full bg-[#EF4444]" />
+                        <p className="truncate text-[#18181B]">{food.name}</p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-3 text-[#71717A]">
+                        <span>x {food.qty}</span>
+                        <span className="font-medium text-[#18181B]">
+                          ${Number(food.total).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-                <p>${item.totalPrice.toFixed(2)}</p>
-
-                <button onClick={() => removeFromCart(item._id)}>
-                  <CancelIcon />
-                </button>
+                <div className="mt-4 flex items-center justify-between border-t border-[#F4F4F5] pt-3 text-xs text-[#71717A]">
+                  <span>{order.date}</span>
+                  <span className="font-semibold text-[#18181B]">
+                    ${Number(order.total).toFixed(2)}
+                  </span>
+                </div>
               </div>
             ))
           )}
         </div>
 
-
-        <div className="pt-[15px] border-t mt-[16px]">
-          <div className="flex justify-between font-semibold">
+        <div className="mt-5 border-t border-[#E4E4E7] pt-4">
+          <div className="flex items-center justify-between text-[15px] font-semibold text-[#18181B]">
             <p>Total</p>
-            <p>${total.toFixed(2)}</p>
+            <p>${grandTotal.toFixed(2)}</p>
           </div>
         </div>
       </div>
 
+      <div className="mt-4 rounded-[24px] bg-white px-4 py-5 shadow-[0_16px_45px_rgba(15,23,42,0.14)]">
+        <p className="text-[15px] font-semibold text-[#71717A]">Payment info</p>
 
-      <div className="w-[471px] bg-white rounded-lg ml-[30px] mt-[20px] p-[16px]">
-        <p className="pb-[20px]">Payment info</p>
-
-        <div className="flex justify-between pb-[8px]">
+        <div className="mt-5 flex items-center justify-between text-base text-[#71717A]">
           <p>Items</p>
-          <p>${grandTotal.toFixed(2)}</p>
+          <p className="font-semibold text-[#18181B]">
+            ${itemsTotal.toFixed(2)}
+          </p>
         </div>
 
-        <div className="flex justify-between pb-[20px]">
+        <div className="mt-3 flex items-center justify-between text-base text-[#71717A]">
           <p>Shipping</p>
-          <p>${shipping.toFixed(2)}</p>
+          <p className="font-semibold text-[#18181B]">
+            ${shipping.toFixed(2)}
+          </p>
         </div>
 
-        <LineIcon />
+        <LineIcon className="mt-5 w-full" />
 
-        <div className="flex justify-between pt-[20px] pb-[20px]">
-          <p>Total</p>
-          <p>${total.toFixed(2)}</p>
+        <div className="mt-5 flex items-center justify-between text-[15px]">
+          <p className="text-[#71717A]">Total</p>
+          <p className="text-[28px] font-semibold leading-none text-[#18181B]">
+            ${grandTotal.toFixed(2)}
+          </p>
         </div>
       </div>
-    </div>
+    </>
   );
 }

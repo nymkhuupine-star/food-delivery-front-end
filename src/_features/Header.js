@@ -8,6 +8,7 @@ import HeaderUserIcon from "@/_icons/HeaderUserIcon";
 import { useCart } from "@/_provider/CartProvider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Header() {
   const { setIsOrderOpen } = useCart();
@@ -29,8 +30,13 @@ export default function Header() {
           >
             <HeaderShoppingIcon />
           </Button>
-          <Button className=" rounded-full w-[36px] h-[36px] p-0 flex items-center justify-center bg-red-600">
-            <HeaderUserIcon />
+          <Button
+            asChild
+            className="rounded-full w-[36px] h-[36px] p-0 flex items-center justify-center bg-red-600"
+          >
+            <Link href="/login" aria-label="Go to login page">
+              <HeaderUserIcon />
+            </Link>
           </Button>
         </div>
       </div>

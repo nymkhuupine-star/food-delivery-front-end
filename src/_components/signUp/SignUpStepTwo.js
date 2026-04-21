@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import LoginIcon from "@/_icons/loginIcon";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,14 +9,15 @@ import Link from "next/link";
 
 const SignUpStepTwo = ({ onBack, formik }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState("");
-
-  const handleClick = () => {
-    create(formik.values, setMessage);
-  };
 
   const { values, handleChange, handleBlur, errors, touched, handleSubmit } =
     formik;
+  const isSubmitDisabled =
+    !values.password ||
+    !values.confirmPassword ||
+    Boolean(errors.password) ||
+    Boolean(errors.confirmPassword);
+
   return (
     <div className=" flex flex-row justify-center items-center gap-[48px] h-screen">
       <div className="flex flex-col">
@@ -94,18 +94,16 @@ const SignUpStepTwo = ({ onBack, formik }) => {
         </div>
 
         <Button
-  className={`w-[416px] h-[36px] text-sm transition-colors
-    ${
-      !errors.confirmPassword && values.confirmPassword
-        ? "bg-[#18181B] text-white"
-        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-    }
-  `}
-  onClick={handleSubmit}
-  disabled={errors.confirmPassword || !values.confirmPassword}
->
-  Let's Go
-</Button>
+          className={`w-[416px] h-[36px] text-sm transition-colors ${
+            isSubmitDisabled
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-[#18181B] text-white"
+          }`}
+          onClick={handleSubmit}
+          disabled={isSubmitDisabled}
+        >
+          Let's Go
+        </Button>
 
         <div className="flex flex-row pt-[24px] gap-[5px]">
           <p className="pl-[85px] text-base">Already have an account?</p>
