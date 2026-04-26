@@ -6,6 +6,12 @@ import { apiUrl } from "@/lib/api";
 
 const AppContext = createContext(null);
 
+const getAuthHeaders = () => {
+  if (typeof window === "undefined") return {};
+  const token = window.localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 export const CategoryFoodProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [catLoading, setCatLoading] = useState(false);
@@ -27,19 +33,19 @@ export const CategoryFoodProvider = ({ children }) => {
   };
 
   const createCategory = async (payload) => {
-    const { data } = await axios.post(apiUrl("/category"), payload);
+    const { data } = await axios.post(apiUrl("/category"), payload, { headers: getAuthHeaders() });
     setCategories((prev) => [data, ...prev]);
     return data;
   };
 
   const updateCategory = async (id, payload) => {
-    const { data } = await axios.put(apiUrl(`/category/${id}`), payload);
+    const { data } = await axios.put(apiUrl(`/category/${id}`), payload, { headers: getAuthHeaders() });
     setCategories((prev) => prev.map((c) => (c._id === id ? data : c)));
     return data;
   };
 
   const deleteCategory = async (id) => {
-    await axios.delete(apiUrl(`/category/${id}`));
+    await axios.delete(apiUrl(`/category/${id}`), { headers: getAuthHeaders() });
     setCategories((prev) => prev.filter((c) => c._id !== id));
   };
 
@@ -58,14 +64,14 @@ export const CategoryFoodProvider = ({ children }) => {
   };
 
   const createFood = async (payload) => {
-    const { data } = await axios.post(apiUrl("/food"), payload);
+    const { data } = await axios.post(apiUrl("/food"), payload, { headers: getAuthHeaders() });
     setFoods((prev) => [data, ...prev]);
     triggerRefresh();
     return data;
   };
 
   const updateFood = async (id, payload) => {
-    const { data } = await axios.put(apiUrl(`/food/${id}`), payload);
+    const { data } = await axios.put(apiUrl(`/food/${id}`), payload, { headers: getAuthHeaders() });
     const nextFood = data?._id ? data : { ...payload, _id: id };
     setFoods((prev) =>
       prev.map((f) => (f._id === id ? { ...f, ...nextFood } : f))
@@ -75,7 +81,7 @@ export const CategoryFoodProvider = ({ children }) => {
   };
 
   const deleteFood = async (id) => {
-    await axios.delete(apiUrl(`/food/${id}`));
+    await axios.delete(apiUrl(`/food/${id}`), { headers: getAuthHeaders() });
     setFoods((prev) => prev.filter((f) => f._id !== id));
     triggerRefresh();
   };

@@ -126,6 +126,11 @@ export const updateCurrentUser = (patch) => {
   return setCurrentUser({ ...currentUser, ...patch });
 };
 
+export const isAdmin = () => {
+  const user = getCurrentUser();
+  return user?.role === "ADMIN";
+};
+
 export const getCustomerDisplayName = (user) => {
   if (user?.firstName?.trim()) return user.firstName.trim();
   if (user?.email?.trim()) return user.email.trim();

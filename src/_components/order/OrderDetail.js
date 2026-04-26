@@ -66,7 +66,6 @@ export default function OrderDetail() {
 
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
-    if (!validateAddress()) return;
 
     const token = window.localStorage.getItem("token");
 
@@ -74,6 +73,8 @@ export default function OrderDetail() {
       setIsLoginRequiredOpen(true);
       return;
     }
+
+    if (!validateAddress()) return;
 
     const currentUser = getCurrentUser();
     const normalizedAddress = deliveryAddress.trim();

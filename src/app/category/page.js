@@ -6,13 +6,20 @@ import { useFormik } from "formik";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useApp } from "@/_provider/CategoryFoodProvider";
+import { useRouter } from "next/navigation";
+import { isAdmin } from "@/lib/orderStorage";
 
 export default function Category() {
   const { categories, createCategory, fetchCategories } = useApp();
+  const router = useRouter();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
+    if (!isAdmin()) {
+      router.replace("/");
+      return;
+    }
     fetchCategories();
   }, []);
   const formik = useFormik({
