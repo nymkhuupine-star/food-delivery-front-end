@@ -25,8 +25,19 @@ export default function Login() {
         password,
       });
 
-      localStorage.setItem("token", response.data.token);
-      setCurrentUser(response.data.user);
+      const token = response.data?.token;
+      if (
+        typeof token !== "string" ||
+        !token.trim() ||
+        token === "undefined" ||
+        token === "null"
+      ) {
+        toast.error("Login failed. Please try again");
+        return;
+      }
+
+      localStorage.setItem("token", token);
+      setCurrentUser(response.data?.user ?? null);
       toast.success("Login successful");
       router.replace("/");
     } catch (error) {

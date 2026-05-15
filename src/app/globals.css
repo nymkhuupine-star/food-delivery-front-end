@@ -157,3 +157,48 @@ body {
 .animate-marquee {
   animation: marquee 12s linear infinite;
 }
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@layer utilities {
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: rgba(24, 24, 27, 0.06);
+  }
+
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.18) 35%,
+      rgba(255, 255, 255, 0.32) 50%,
+      rgba(255, 255, 255, 0.18) 65%,
+      transparent 100%
+    );
+    transform: translateX(-120%);
+    animation: shimmer 1.15s ease-in-out infinite;
+  }
+
+  .dark .skeleton {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .skeleton-soft {
+    background: rgba(24, 24, 27, 0.04);
+  }
+
+  .dark .skeleton-soft {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}

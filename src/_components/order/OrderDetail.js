@@ -14,6 +14,7 @@ import LoginRequiredDialog from "../dialog/LoginRequiredDialog";
 import {
   addStoredOrder,
   createStoredOrder,
+  getAuthToken,
   getCurrentUser,
   updateCurrentUser,
 } from "@/lib/orderStorage";
@@ -33,6 +34,7 @@ export default function OrderDetail() {
   const [isLoginRequiredOpen, setIsLoginRequiredOpen] = useState(false);
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [addressError, setAddressError] = useState("");
+  const hasCartItems = cartItems.length > 0;
 
   useEffect(() => {
     if (!isOrderOpen) return;
@@ -44,9 +46,17 @@ export default function OrderDetail() {
     }
   }, [isOrderOpen]);
 
+  useEffect(() => {
+    if (hasCartItems) return;
+
+    setDeliveryAddress("");
+    setAddressError("");
+  }, [hasCartItems]);
+
   if (!isOrderOpen) return null;
 
   const validateAddress = () => {
+    if (!hasCartItems) return true;
     if (!deliveryAddress.trim()) {
       setAddressError("Please complete your address");
       return false;
@@ -67,7 +77,7 @@ export default function OrderDetail() {
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
 
-    const token = window.localStorage.getItem("token");
+    const token = getAuthToken();
 
     if (!token) {
       setIsLoginRequiredOpen(true);
@@ -77,6 +87,10 @@ export default function OrderDetail() {
     if (!validateAddress()) return;
 
     const currentUser = getCurrentUser();
+    if (!currentUser) {
+      setIsLoginRequiredOpen(true);
+      return;
+    }
     const normalizedAddress = deliveryAddress.trim();
     const nextOrder = createStoredOrder({
       cartItems,
@@ -101,7 +115,7 @@ export default function OrderDetail() {
   );
   const shipping = 5.99;
   const total = grandTotal + shipping;
-  const isAddressInvalid = Boolean(addressError);
+  const isAddressInvalid = hasCartItems && Boolean(addressError);
 
   return (
     <div className="flex h-screen w-full max-w-[535px] flex-col overflow-y-auto rounded-s-[28px] bg-[#3F3F46] px-5 py-3">
@@ -180,7 +194,9 @@ export default function OrderDetail() {
                     ? "border-[#F87171] text-[#18181B] placeholder:text-[#A1A1AA] focus-visible:border-[#F87171] focus-visible:ring-[#FCA5A5]/40"
                     : "border-[#E4E4E7] text-[#18181B] placeholder:text-[#A1A1AA] focus-visible:border-[#EF4444] focus-visible:ring-[#FCA5A5]/40"
                 }`}
-                onBlur={validateAddress}
+                onBlur={() => {
+                  if (hasCartItems) validateAddress();
+                }}
                 onChange={handleAddressChange}
                 placeholder="Please complete your address"
                 type="text"

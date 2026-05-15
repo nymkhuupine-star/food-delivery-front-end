@@ -3,12 +3,13 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { apiUrl } from "@/lib/api";
+import { getAuthToken } from "@/lib/orderStorage";
 
 const AppContext = createContext(null);
 
 const getAuthHeaders = () => {
   if (typeof window === "undefined") return {};
-  const token = window.localStorage.getItem("token");
+  const token = getAuthToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 

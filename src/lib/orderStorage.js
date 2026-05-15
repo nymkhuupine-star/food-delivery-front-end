@@ -4,6 +4,7 @@ export const ORDERS_STORAGE_KEY = "nomnom-orders";
 export const CURRENT_USER_STORAGE_KEY = "nomnom-current-user";
 export const ORDERS_UPDATED_EVENT = "nomnom-orders-updated";
 export const USER_UPDATED_EVENT = "nomnom-user-updated";
+export const AUTH_TOKEN_STORAGE_KEY = "token";
 
 const canUseBrowser = () => typeof window !== "undefined";
 
@@ -45,6 +46,33 @@ const decodeTokenPayload = (token) => {
   } catch {
     return null;
   }
+};
+
+export const getAuthToken = () => {
+  if (!canUseBrowser()) return null;
+
+  const rawToken = window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+  if (typeof rawToken !== "string") return null;
+
+  const token = rawToken.trim();
+
+  if (!token || token === "undefined" || token === "null") {
+    window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    return null;
+  }
+
+  const decoded = decodeTokenPayload(token);
+  const exp = decoded?.exp;
+
+  if (typeof exp === "number") {
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    if (exp <= nowSeconds) {
+      window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+      return null;
+    }
+  }
+
+  return token;
 };
 
 export const formatOrderDate = (value) => {
@@ -94,7 +122,7 @@ export const getCurrentUser = () => {
 
   if (storedUser) return storedUser;
 
-  const decodedToken = decodeTokenPayload(window.localStorage.getItem("token"));
+  const decodedToken = decodeTokenPayload(getAuthToken());
   return sanitizeUser(decodedToken?.user);
 };
 
