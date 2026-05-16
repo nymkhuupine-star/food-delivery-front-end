@@ -16,7 +16,7 @@ export default function SideBar() {
     "h-10 w-full justify-start gap-2.5 rounded-full px-4 text-sm font-medium shadow-none transition";
 
   return (
-    <aside className="flex min-h-screen w-[180px] shrink-0 flex-col border-r border-[#E4E4E7] bg-white px-5 py-8">
+    <aside className="sticky top-0 flex h-screen w-[180px] shrink-0 flex-col border-r border-[#E4E4E7] bg-white px-5 py-8">
       <div className="flex h-[44px] items-center">
         <HeaderLogoTwoIcon />
         <div className="pl-[10px]">
