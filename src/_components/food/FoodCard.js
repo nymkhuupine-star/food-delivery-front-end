@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useApp } from "@/_provider/CategoryFoodProvider";
 import { Button } from "@/components/ui/button";
 import RedPlusIcon from "@/_icons/RedPlusIcon";
 import HomeFoodDialog from "@/_components/dialog/HomeFoodDialog";
-import { apiUrl } from "@/lib/api";
 
 function FoodCardSkeleton() {
   return (
@@ -27,34 +25,15 @@ function FoodCardSkeleton() {
 }
 
 export default function FoodCard({ categoryId }) {
-  const [foods, setFoods] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { refresh } = useApp();
+  const { foods, foodLoading } = useApp();
+
+  const categoryFoods = useMemo(() => {
+    if (!Array.isArray(foods)) return [];
+    return foods.filter((food) => food.category === categoryId);
+  }, [foods, categoryId]);
 
   const [open, setOpen] = useState(false);
   const [selectedFood, setSelectedFood] = useState(null);
-
-  useEffect(() => {
-    let isActive = true;
-    const getFoodCard = async () => {
-      setIsLoading(true);
-      try {
-        const res = await axios.get(apiUrl(`/food/category/${categoryId}`));
-        if (!isActive) return;
-        setFoods(Array.isArray(res.data) ? res.data : []);
-      } catch {
-        if (!isActive) return;
-        setFoods([]);
-      } finally {
-        if (!isActive) return;
-        setIsLoading(false);
-      }
-    };
-    getFoodCard();
-    return () => {
-      isActive = false;
-    };
-  }, [categoryId, refresh]);
 
   const handleOpenDialog = (food) => {
     setSelectedFood(food);
@@ -64,11 +43,11 @@ export default function FoodCard({ categoryId }) {
   return (
     <>
       <div className="w-[1264px] mx-auto grid grid-cols-3 gap-[40px]">
-        {isLoading && foods.length === 0
+        {foodLoading && categoryFoods.length === 0
           ? Array.from({ length: 3 }).map((_, idx) => (
               <FoodCardSkeleton key={`skeleton-${idx}`} />
             ))
-          : foods.map((food) => (
+          : categoryFoods.map((food) => (
               <div
                 key={food._id}
                 className="bg-white border rounded-xl w-[397px] h-[342px]"

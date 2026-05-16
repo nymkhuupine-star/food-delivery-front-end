@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import { PlusIcon } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import Image from "next/image";
@@ -20,7 +20,7 @@ export default function AddFoodCard({ category }) {
   const [logoUrl, setLogoUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  const { createFood, fetchFood, triggerRefresh } = useApp();
+  const { createFood } = useApp();
 
   const [preview, setPreview] = useState(null);
 
@@ -52,7 +52,6 @@ export default function AddFoodCard({ category }) {
         image: preview,
         category: category._id,
       });
-      triggerRefresh();
       toast.success("Dish added!");
       // resetForm();
       setIsDialogOpen(false);
@@ -61,10 +60,6 @@ export default function AddFoodCard({ category }) {
       toast.error("Failed to add dish");
     }
   };
-
-  useEffect(() => {
-    fetchFood();
-  }, []);
 
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();

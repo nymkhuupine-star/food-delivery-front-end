@@ -20,14 +20,14 @@ export const CategoryFoodProvider = ({ children }) => {
   const [foods, setFoods] = useState([]);
   const [foodLoading, setFoodLoading] = useState(false);
 
-  const [refresh, setRefresh] = useState(false);
-  const triggerRefresh = () => setRefresh((prev) => !prev);
-
   const fetchCategories = async () => {
     setCatLoading(true);
     try {
       const { data } = await axios.get(apiUrl("/category"));
-      setCategories(data);
+      setCategories(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+      setCategories([]);
     } finally {
       setCatLoading(false);
     }
@@ -54,7 +54,10 @@ export const CategoryFoodProvider = ({ children }) => {
     setFoodLoading(true);
     try {
       const { data } = await axios.get(apiUrl("/food"));
-      setFoods(data);
+      setFoods(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch foods", error);
+      setFoods([]);
     } finally {
       setFoodLoading(false);
     }
@@ -67,7 +70,6 @@ export const CategoryFoodProvider = ({ children }) => {
   const createFood = async (payload) => {
     const { data } = await axios.post(apiUrl("/food"), payload, { headers: getAuthHeaders() });
     setFoods((prev) => [data, ...prev]);
-    triggerRefresh();
     return data;
   };
 
@@ -77,14 +79,12 @@ export const CategoryFoodProvider = ({ children }) => {
     setFoods((prev) =>
       prev.map((f) => (f._id === id ? { ...f, ...nextFood } : f))
     );
-    triggerRefresh();
     return nextFood;
   };
 
   const deleteFood = async (id) => {
     await axios.delete(apiUrl(`/food/${id}`), { headers: getAuthHeaders() });
     setFoods((prev) => prev.filter((f) => f._id !== id));
-    triggerRefresh();
   };
 
   useEffect(() => {
@@ -108,8 +108,6 @@ export const CategoryFoodProvider = ({ children }) => {
         updateFood,
         deleteFood,
         fetchFoodByCategory,
-        refresh,
-        triggerRefresh,
       }}
     >
       {children}

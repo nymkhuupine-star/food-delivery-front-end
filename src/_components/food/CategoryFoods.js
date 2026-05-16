@@ -1,33 +1,22 @@
 "use client";
 
-import axios from "axios";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useApp } from "@/_provider/CategoryFoodProvider";
 import { Button } from "@/components/ui/button";
 import EditIcon from "@/_icons/EditIcon";
 import FoodEditDialog from "../dialog/FoodEditDialog";
-import { apiUrl } from "@/lib/api";
 import { toast } from "sonner";
 
 export const CategoryFoods = ({ categoryId, categories }) => {
-  const [foods, setFoods] = useState([]);
-  const { refresh, deleteFood, updateFood } = useApp();
+  const { foods, deleteFood, updateFood } = useApp();
   const [selectedFood, setSelectedFood] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const getCategoryFoods = async () => {
-    try {
-      const response = await axios.get(apiUrl(`/food/category/${categoryId}`));
-      setFoods(response.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    getCategoryFoods();
-  }, [categoryId, refresh]);
+  const categoryFoods = useMemo(() => {
+    if (!Array.isArray(foods)) return [];
+    return foods.filter((food) => food.category === categoryId);
+  }, [foods, categoryId]);
 
   const handleOpenEdit = (food) => {
     setSelectedFood({ ...food });
@@ -85,7 +74,7 @@ export const CategoryFoods = ({ categoryId, categories }) => {
 
   return (
     <>
-      {foods.map((food) => (
+      {categoryFoods.map((food) => (
         <div key={food._id}>
           <div className="relative flex h-[241px] w-full flex-col rounded-[20px] border border-neutral-200 bg-white p-3 shadow-sm">
             <div className="relative flex h-[129px] w-full justify-center overflow-hidden rounded-[16px]">

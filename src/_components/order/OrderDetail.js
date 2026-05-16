@@ -124,11 +124,14 @@ export default function OrderDetail() {
         <p className="ml-[10px] text-white">Order detail</p>
 
         <button
-          className="ml-auto rounded-full border border-white/15 bg-white/10 p-2.5 transition hover:bg-white/15"
+          className="ml-auto flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white shadow-md transition-all duration-200 hover:bg-white hover:text-[#3F3F46] active:scale-95"
           onClick={() => setIsOrderOpen(false)}
           type="button"
+          aria-label="Close order detail"
         >
-          <CancelIcon />
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
         </button>
       </div>
 
