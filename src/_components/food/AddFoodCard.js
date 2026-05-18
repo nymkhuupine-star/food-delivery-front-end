@@ -121,8 +121,8 @@ export default function AddFoodCard({ category }) {
       </div>
 
       {isDialogOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 backdrop-blur-[2px]">
-          <div className="h-[592px] w-[460px] rounded-[24px] bg-white p-5 shadow-[0_32px_64px_rgba(15,23,42,0.16)]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 backdrop-blur-[2px] px-4 py-6">
+          <div className="max-h-[calc(100vh-2rem)] w-full max-w-[460px] overflow-y-auto rounded-[24px] bg-white p-5 shadow-[0_32px_64px_rgba(15,23,42,0.16)]">
             <div className="flex flex-row justify-between">
               <h3 className="text-lg font-semibold">
                 Add new Dish to {category.categoryName}
@@ -136,7 +136,7 @@ export default function AddFoodCard({ category }) {
               </button>
             </div>
 
-            <div className="flex flex-row pt-[44px] gap-[24px]">
+            <div className="grid grid-cols-1 gap-4 pt-8 sm:grid-cols-2">
               <div>
                 <p className="text-sm">Food name</p>
                 <Input
@@ -146,7 +146,7 @@ export default function AddFoodCard({ category }) {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="Type food name"
-                  className="mb-4 h-[38px] w-[194px] rounded-lg border border-neutral-300 px-4 py-2"
+                  className="mb-4 h-10 w-full rounded-lg border border-neutral-300 px-4 py-2"
                 />
               </div>
 
@@ -159,7 +159,7 @@ export default function AddFoodCard({ category }) {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="Enter price..."
-                  className="mb-4 h-[38px] w-[194px] rounded-lg border border-neutral-300 px-4 py-2"
+                  className="mb-4 h-10 w-full rounded-lg border border-neutral-300 px-4 py-2"
                 />
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function AddFoodCard({ category }) {
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="List ingredients..."
-              className="mb-4 h-[90px] w-[412px]"
+              className="mb-4 h-[90px] w-full rounded-lg border border-neutral-300 px-4 py-2"
             />
 
             <p className="text-sm mb-1">Food image</p>
@@ -191,7 +191,7 @@ export default function AddFoodCard({ category }) {
                 <label
                   htmlFor="fileInput"
                   className="
-                    w-[420px] h-[138px]
+                    w-full h-[138px]
                     flex flex-col gap-2 justify-center items-center
                     rounded-md border border-dashed
                     border-[rgba(37,99,235,0.20)]
@@ -208,7 +208,7 @@ export default function AddFoodCard({ category }) {
               )}
 
               {logoUrl && (
-                <div className="relative w-[420px] h-[138px]">
+                <div className="relative h-[138px] w-full">
                   <Image
                     src={logoUrl}
                     alt="Uploaded image"

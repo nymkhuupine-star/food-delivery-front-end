@@ -9,10 +9,10 @@ import HomeFoodDialog from "@/_components/dialog/HomeFoodDialog";
 
 function FoodCardSkeleton() {
   return (
-    <div className="bg-white border rounded-xl w-[397px] h-[342px]">
-      <div className="relative w-[365px] mx-auto h-[210px] mt-4 rounded skeleton skeleton-soft" />
+    <div className="flex flex-col overflow-hidden rounded-xl border bg-white shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
+      <div className="relative aspect-[4/3] w-full skeleton skeleton-soft" />
 
-      <div className="px-4 pt-4 space-y-3">
+      <div className="space-y-3 p-4">
         <div className="flex justify-between items-center gap-3">
           <div className="h-4 w-40 rounded-full skeleton" />
           <div className="h-4 w-14 rounded-full skeleton" />
@@ -35,6 +35,15 @@ export default function FoodCard({ categoryId }) {
   const [open, setOpen] = useState(false);
   const [selectedFood, setSelectedFood] = useState(null);
 
+  // If the selected food is cleared externally, ensure the dialog closes.
+  // (Prevents dialog from being "open" without content.)
+  const handleOpenChange = (nextOpen) => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
+      setSelectedFood(null);
+    }
+  };
+
   const handleOpenDialog = (food) => {
     setSelectedFood(food);
     setOpen(true);
@@ -42,7 +51,8 @@ export default function FoodCard({ categoryId }) {
 
   return (
     <>
-      <div className="w-[1264px] mx-auto grid grid-cols-3 gap-[40px]">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:gap-6">
         {foodLoading && categoryFoods.length === 0
           ? Array.from({ length: 3 }).map((_, idx) => (
               <FoodCardSkeleton key={`skeleton-${idx}`} />
@@ -50,37 +60,65 @@ export default function FoodCard({ categoryId }) {
           : categoryFoods.map((food) => (
               <div
                 key={food._id}
-                className="bg-white border rounded-xl w-[397px] h-[342px]"
+                className="flex flex-col overflow-hidden rounded-xl border bg-white shadow-[0_10px_30px_rgba(15,23,42,0.05)]"
               >
-                <div className="relative w-[365px] mx-auto h-[210px] mt-4">
+                <div
+                  className="relative aspect-[4/3] w-full cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleOpenDialog(food)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      handleOpenDialog(food);
+                    }
+                  }}
+                  aria-label={`Open ${food.foodName}`}
+                >
                   <Image
                     src={food.image}
                     fill
-                    className="object-cover rounded"
+                    className="object-cover"
                     alt={food.foodName}
                   />
 
                   <Button
-                    onClick={() => handleOpenDialog(food)}
-                    className="absolute bottom-2 right-2 bg-white rounded-full w-8 h-8"
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleOpenDialog(food);
+                    }}
+                    className="absolute bottom-2 right-2 h-9 w-9 rounded-full bg-white p-0 shadow-[0_8px_24px_rgba(15,23,42,0.18)] hover:bg-white"
+                    aria-label={`Open ${food.foodName}`}
                   >
                     <RedPlusIcon />
                   </Button>
                 </div>
 
-                <div className="px-4 pt-4">
-                  <div className="flex justify-between">
-                    <p className="text-red-500">{food.foodName}</p>
-                    <p>${food.price}</p>
+                <div className="flex flex-1 flex-col p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="font-medium text-red-500">{food.foodName}</p>
+                    <p className="shrink-0 font-medium">${food.price}</p>
                   </div>
-                  <p className="text-gray-600">{food.ingredients}</p>
+                  <p
+                    className="mt-2 text-sm text-gray-600"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {food.ingredients}
+                  </p>
                 </div>
               </div>
             ))}
+        </div>
       </div>
 
       {selectedFood && (
-        <HomeFoodDialog open={open} setOpen={setOpen} food={selectedFood} />
+        <HomeFoodDialog open={open} setOpen={handleOpenChange} food={selectedFood} />
       )}
     </>
   );

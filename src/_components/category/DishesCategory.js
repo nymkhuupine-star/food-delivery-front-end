@@ -128,8 +128,8 @@ export default function DishesCategory({
 
         {isDialogOpen && (
           <form onSubmit={handleAddCategory}>
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 backdrop-blur-[2px]">
-              <div className="w-[412px] rounded-[24px] bg-white p-5 shadow-[0_32px_64px_rgba(15,23,42,0.16)]">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 backdrop-blur-[2px] px-4 py-6">
+              <div className="max-h-[calc(100vh-2rem)] w-full max-w-[412px] overflow-y-auto rounded-[24px] bg-white p-5 shadow-[0_32px_64px_rgba(15,23,42,0.16)]">
                 <div className="flex justify-between">
                   <h3 className="text-xl font-semibold text-[#18181B]">
                     Add New Category

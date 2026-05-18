@@ -2,38 +2,51 @@
 
 import Image from "next/image";
 import { X } from "lucide-react";
-import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
 import { useCart } from "@/_provider/CartProvider";
 
 export default function HomeFoodDialog({ open, setOpen, food }) {
   const [qty, setQty] = useState(1);
   const { addToCart } = useCart();
-  if (!food) return null;
 
-  const handleAddToCart = () => {
-    addToCart({
-      ...food,
-      qty: qty,
-      totalPrice: +(food.price * qty).toFixed(2),
-    });
-    setOpen(false);
-  };
   useEffect(() => {
     if (open) setQty(1);
   }, [open]);
 
+  if (!open || !food) return null;
+
+  const handleAddToCart = () => {
+    addToCart({
+      ...food,
+      qty,
+      totalPrice: +(food.price * qty).toFixed(2),
+    });
+    setOpen(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="p-0 rounded-2xl w-[760px] max-w-none">
-        <DialogTitle className="sr-only">{food?.foodName}</DialogTitle>
-        <div className="grid grid-cols-2 gap-4 p-4">
-          <div className="relative w-full h-[250px] rounded-xl overflow-hidden">
+    <div
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 px-4 py-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label={food.foodName}
+      onClick={() => setOpen(false)}
+    >
+      <div
+        className="relative max-h-[calc(100vh-2rem)] w-full max-w-[760px] overflow-y-auto rounded-2xl bg-white shadow-[0_32px_64px_rgba(15,23,42,0.18)]"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button
+          type="button"
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white shadow"
+          onClick={() => setOpen(false)}
+          aria-label="Close dialog"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
             <Image
               src={food.image}
               alt={food.foodName}
@@ -42,38 +55,35 @@ export default function HomeFoodDialog({ open, setOpen, food }) {
             />
           </div>
 
-          <div className="pr-4 relative">
-            <button
-              className="absolute top-0 right-0 bg-white w-6 h-6 rounded-full flex items-center justify-center shadow"
-              onClick={() => setOpen(false)}
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <h2 className="text-red-500 text-xl font-semibold">
+          <div className="relative sm:pr-4">
+            <h2 className="text-xl font-semibold text-red-500">
               {food.foodName}
             </h2>
-            <p className="text-gray-600 mt-1 text-sm">{food.ingredients}</p>
+            <p className="mt-1 text-sm text-gray-600">{food.ingredients}</p>
 
             <div className="mt-6">
               <p className="text-sm text-gray-500">Total price</p>
               <p className="text-lg font-bold">
-                ${(food.price * qty).toFixed(2)}
+                ${(Number(food.price) * qty).toFixed(2)}
               </p>
             </div>
 
             <div className="mt-4 flex items-center gap-4">
-              <div className="flex items-center bg-gray-100 rounded-full px-3 py-1">
+              <div className="flex items-center rounded-full bg-gray-100 px-3 py-1">
                 <button
+                  type="button"
                   onClick={() => qty > 1 && setQty(qty - 1)}
-                  className="w-6 h-6 rounded-full border flex items-center justify-center"
+                  className="flex h-6 w-6 items-center justify-center rounded-full border"
+                  aria-label="Decrease quantity"
                 >
-                  −
+                  -
                 </button>
                 <span className="px-3">{qty}</span>
                 <button
+                  type="button"
                   onClick={() => setQty(qty + 1)}
-                  className="w-6 h-6 rounded-full border flex items-center justify-center"
+                  className="flex h-6 w-6 items-center justify-center rounded-full border"
+                  aria-label="Increase quantity"
                 >
                   +
                 </button>
@@ -81,14 +91,15 @@ export default function HomeFoodDialog({ open, setOpen, food }) {
             </div>
 
             <button
-              className="mt-6 w-full bg-black text-white py-2 rounded-full"
+              type="button"
+              className="mt-6 w-full rounded-full bg-black py-2 text-white hover:bg-black/90"
               onClick={handleAddToCart}
             >
               Add to cart
             </button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }

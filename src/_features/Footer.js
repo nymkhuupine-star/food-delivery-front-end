@@ -3,72 +3,63 @@
 import HeaderLogoIcon from "@/_icons/HeaderLogoIcon";
 import SocialIcon from "@/_icons/SocialIcon";
 
-
 export default function Footer() {
   return (
-   
-    <div className="pt-[54px]  bg-neutral-700 ">
+    <footer className="bg-slate-950">
+      <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="overflow-hidden rounded-2xl bg-red-500">
+          <div className="flex h-[92px] items-center whitespace-nowrap">
+            <div className="flex gap-12 animate-marquee text-2xl font-semibold text-white">
+              <p>Fresh fast delivered</p>
+              <p>Fresh fast delivered</p>
+              <p>Fresh fast delivered</p>
+              <p>Fresh fast delivered</p>
+              <p>Fresh fast delivered</p>
+            </div>
+          </div>
+        </div>
 
-      
-    
-    <div className="bg-slate-950 h-[755px] pt-[60px] w-full">
-      
-     
-      <div className="w-[1280px] mx-auto overflow-hidden">
-        <div className="bg-red-500 h-[92px] flex items-center whitespace-nowrap">
-          
-          <div className="flex gap-[48px] animate-marquee text-white text-2xl font-semibold">
-            <p>Fresh fast delivered</p>
-            <p>Fresh fast delivered</p>
-            <p>Fresh fast delivered</p>
-            <p>Fresh fast delivered</p>
-            <p>Fresh fast delivered</p>
-            
+        <div className="mt-12 grid gap-10 md:grid-cols-[auto_1fr_auto] md:items-start">
+          <HeaderLogoIcon />
+
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+            <div className="flex flex-col gap-2 text-white">
+              <p className="font-bold">NOMNOM</p>
+              <p>Home</p>
+              <p>Contact us</p>
+              <p>Delivery zone</p>
+            </div>
+
+            <div className="flex flex-col gap-2 text-white">
+              <p className="font-bold">Menu</p>
+              <p>Appetizers</p>
+              <p>Salads</p>
+              <p>Pizzas</p>
+            </div>
+
+            <div className="flex flex-col gap-2 text-white">
+              <p className="font-bold">More</p>
+              <p>Side dish</p>
+              <p>Brunch</p>
+              <p>Desserts</p>
+              <p>Beverages</p>
+            </div>
           </div>
 
+          <div className="md:justify-self-end">
+            <SocialIcon />
+          </div>
+        </div>
+
+        <div className="mt-12 border-t-4 border-slate-500 pt-6">
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-3 text-sm text-white">
+            <p>Copyright 2024 Nomnom LLC</p>
+            <p>Privacy policy</p>
+            <p>Terms and condition</p>
+            <p>Cookie policy</p>
+          </div>
         </div>
       </div>
-
-     
-      <div className="flex w-[1280px] mx-auto justify-between items-center pt-[100px] gap-[112px]">
-        <HeaderLogoIcon />
-
-        <div className="text-white flex flex-col gap-2">
-          <p className="font-bold">NOMNOM</p>
-          <p>Home</p>
-          <p>Contact us</p>
-          <p>Delivery zone</p>
-        </div>
-
-        <div className="text-white flex flex-col gap-2">
-          <p className="font-bold">Menu</p>
-          <p>Appetizers</p>
-          <p>Salads</p>
-          <p>Pizzas</p>
-        </div>
-
-        <div className="text-white flex flex-col gap-2">
-          <p className="font-bold">More</p>
-          <p>Side dish</p>
-          <p>Brunch</p>
-          <p>Desserts</p>
-          <p>Beverages</p>
-        </div>
-
-        <SocialIcon />
-      </div>
-
-      
-      <div className="pt-[184px] w-[1280px] mx-auto flex justify-center">
-        <div className="w-[1264px] h-[84px] border-t-4 border-slate-500 bg-slate-950 text-white flex gap-[48px] items-center">
-          <p>Copyright 2024 Nomnom LLC</p>
-          <p>Privacy policy</p>
-          <p>Terms and condition</p>
-          <p>Cookie policy</p>
-        </div>
-      </div>
-    </div>
-    </div>
-    
+    </footer>
   );
 }

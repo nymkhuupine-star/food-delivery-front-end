@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import LoginIcon from "@/_icons/loginIcon";
 import { Button } from "@/components/ui/button";
@@ -6,12 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
-
 const SignUpStepTwo = ({ onBack, formik }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const { values, handleChange, handleBlur, errors, touched, handleSubmit } =
     formik;
+
   const isSubmitDisabled =
     !values.password ||
     !values.confirmPassword ||
@@ -19,106 +20,113 @@ const SignUpStepTwo = ({ onBack, formik }) => {
     Boolean(errors.confirmPassword);
 
   return (
-    <div className=" flex flex-row justify-center items-center gap-[48px] h-screen">
-      <div className="flex flex-col">
-        <div
-          className="flex flex-wrap items-center gap-2 md:flex-row cursor-pointer"
-          onClick={onBack}
-        >
-          <Button
-            className="w-[36px] h-[36px]  "
-            variant="outline"
-            size="icon"
-            aria-label="Submit"
-          >
-            <LoginIcon />
-          </Button>
-        </div>
-        <p className="text-2xl pt-[24px] pb-[4px]">Create a strong password</p>
-        <p className="text-base pb-[24px]">
-          Create a strong password with letters, numbers.
-        </p>
-        <div
-          className={`flex flex-col gap-[16px] ${
-            errors.confirmPassword && touched.confirmPassword
-              ? "pb-[8px]"
-              : "pb-[4px]"
-          }`}
-        >
-          <Input
-            className={`w-[416px] h-[36px] border px-2 rounded ${
-              errors.password && touched.password
-                ? "border-red-500"
-                : "border-gray-300 bg-white"
-            }`}
-            name="password"
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            onChange={handleChange}
-            value={values.password}
-            onBlur={handleBlur}
-          />
-          <div>
-            {errors.password && touched.password && (
-              <div className="text-red-500 text-sm">{errors.password} </div>
-            )}
-          </div>
-          <Input
-            className={`w-[416px] h-[36px] border px-2 rounded ${
-              errors.confirmPassword && touched.confirmPassword
-                ? "border-red-500"
-                : "border-gray-300 bg-white"
-            }`}
-            name="confirmPassword"
-            type={showPassword ? "text" : "password"}
-            placeholder="Confirm"
-            onChange={handleChange}
-            value={values.confirmPassword}
-            onBlur={handleBlur}
-          />
-          <div>
-            {errors.confirmPassword && touched.confirmPassword && (
-              <div className="text-red-500 text-sm">
-                {errors.confirmPassword}{" "}
+    <div className="min-h-screen bg-white px-4 py-10">
+      <div className="mx-auto w-full max-w-5xl">
+        <div className="grid items-center gap-10 md:grid-cols-2">
+          <div className="mx-auto w-full max-w-md">
+            <div className="flex items-center gap-2">
+              <Button
+                className="h-9 w-9"
+                variant="outline"
+                size="icon"
+                aria-label="Back"
+                type="button"
+                onClick={onBack}
+              >
+                <LoginIcon />
+              </Button>
+            </div>
+
+            <p className="pt-6 text-2xl">Create a strong password</p>
+            <p className="pb-6 text-base text-zinc-600">
+              Create a strong password with letters, numbers, and symbols.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <Input
+                  className={`h-10 w-full ${
+                    errors.password && touched.password ? "border-red-500" : ""
+                  }`}
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  onChange={handleChange}
+                  value={values.password}
+                  onBlur={handleBlur}
+                />
+                {errors.password && touched.password && (
+                  <div className="pt-2 text-sm text-red-500">
+                    {errors.password}
+                  </div>
+                )}
               </div>
-            )}
+
+              <div>
+                <Input
+                  className={`h-10 w-full ${
+                    errors.confirmPassword && touched.confirmPassword
+                      ? "border-red-500"
+                      : ""
+                  }`}
+                  name="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Confirm"
+                  onChange={handleChange}
+                  value={values.confirmPassword}
+                  onBlur={handleBlur}
+                />
+                {errors.confirmPassword && touched.confirmPassword && (
+                  <div className="pt-2 text-sm text-red-500">
+                    {errors.confirmPassword}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  id="show-password"
+                  checked={showPassword}
+                  onCheckedChange={(checked) => setShowPassword(Boolean(checked))}
+                />
+                <label htmlFor="show-password" className="text-sm text-zinc-700">
+                  Show password
+                </label>
+              </div>
+
+              <Button
+                type="button"
+                className={`h-10 w-full text-sm transition-colors ${
+                  isSubmitDisabled
+                    ? "cursor-not-allowed bg-gray-300 text-gray-500"
+                    : "bg-[#18181B] text-white hover:bg-[#27272A]"
+                }`}
+                onClick={handleSubmit}
+                disabled={isSubmitDisabled}
+              >
+                Let&apos;s Go
+              </Button>
+            </div>
+
+            <div className="pt-6 text-center text-sm">
+              <span className="text-zinc-700">Already have an account?</span>{" "}
+              <Link href="/login" className="text-sky-500 underline">
+                Log in
+              </Link>
+            </div>
+          </div>
+
+          <div className="hidden items-center justify-center md:flex">
+            <img
+              src="/bike.png"
+              alt="Delivery rider illustration"
+              className="h-auto w-full max-w-lg"
+            />
           </div>
         </div>
-        <div className="flex items-center gap-3 pb-[24px]">
-          <Checkbox
-            id="terms"
-            checked={showPassword}
-            onCheckedChange={(checked) => setShowPassword(checked)}
-          />
-          <label htmlFor="terms">Show password</label>
-        </div>
-
-        <Button
-          className={`w-[416px] h-[36px] text-sm transition-colors ${
-            isSubmitDisabled
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-[#18181B] text-white"
-          }`}
-          onClick={handleSubmit}
-          disabled={isSubmitDisabled}
-        >
-          Let's Go
-        </Button>
-
-        <div className="flex flex-row pt-[24px] gap-[5px]">
-          <p className="pl-[85px] text-base">Already have an account?</p>
-         <Link href="/login" className="text-base text-sky-400">
-        Log in
-      </Link>
-        </div>
-      </div>
-      <div className="flex justify-center items-center ">
-        <img src="/bike.png" width={856} height={904} />
       </div>
     </div>
   );
 };
 
 export default SignUpStepTwo;
-
-

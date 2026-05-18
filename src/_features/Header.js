@@ -13,26 +13,30 @@ import Link from "next/link";
 export default function Header() {
   const { setIsOrderOpen } = useCart();
   return (
-    <div className="bg-slate-950 h-[68px] flex justify-center items-center w-[100%]">
-      <div className="w-[1280px] flex flex-row justify-between">
+    <header className="bg-slate-950">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <HeaderLogoIcon />
-        <div className="flex flex-row gap-[13px] items-center">
-          <div className="flex flex-row">
-            <Badge className=" bg-slate-50 w-[251px]  h-[36px]">
-              <HeaderLocationIcon />{" "}
-              <div className="text-rose-700"> Delivery address:</div>{" "}
-              <div className="text-black"> Add Location</div> <HeaderLineIcon />{" "}
-            </Badge>
-          </div>
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Badge className="hidden h-9 items-center gap-2 bg-slate-50 px-3 md:flex">
+            <HeaderLocationIcon />
+            <span className="text-rose-700">Delivery address:</span>
+            <span className="text-black">Add Location</span>
+            <HeaderLineIcon />
+          </Badge>
+
           <Button
-            className=" bg-slate-50 h-5 min-w-5 rounded-full px-1 font-mono tabular-nums w-[36px] h-[36px] flex items-center justify-center"
+            type="button"
+            aria-label="Open cart"
+            className="h-9 w-9 rounded-full bg-slate-50 p-0 text-slate-950 hover:bg-slate-50/90"
             onClick={() => setIsOrderOpen(true)}
           >
             <HeaderShoppingIcon />
           </Button>
+
           <Button
             asChild
-            className="rounded-full w-[36px] h-[36px] p-0 flex items-center justify-center bg-red-600"
+            className="h-9 w-9 rounded-full bg-red-600 p-0 hover:bg-red-700"
           >
             <Link href="/login" aria-label="Go to login page">
               <HeaderUserIcon />
@@ -40,6 +44,6 @@ export default function Header() {
           </Button>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

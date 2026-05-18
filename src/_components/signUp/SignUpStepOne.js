@@ -1,94 +1,90 @@
 "use client";
+
 import LoginIcon from "@/_icons/loginIcon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
 const SignUpStepOne = ({ onNext, formik }) => {
-  const { values, handleChange, handleBlur, errors, touched, handleSubmit } =
-    formik;
+  const { values, handleChange, handleBlur, errors, touched } = formik;
+  const isNextDisabled = Boolean(errors.email) || !values.email;
 
-  // const handleNextStep = () => {
-  //   router.push(`/sign-up/step2`);
-  // };
   return (
-    <div className=" flex flex-row justify-center items-center gap-[48px] h-screen">
-      <div className="flex flex-col">
-        <div className="flex flex-wrap items-center gap-2 md:flex-row">
-          <Button
-            className="w-[36px] h-[36px]  "
-            variant="outline"
-            size="icon"
-            aria-label="Submit"
-          >
-            <LoginIcon />
-          </Button>
-        </div>
-        <p className="text-2xl pt-[24px] pb-[4px]">Create your account</p>
-        <p className="text-base pb-[24px]">
-          Sign up to explore your favorite dishes.
-        </p>
-        <div
-          className={`flex flex-col gap-[16px] ${
-            errors.email && touched.email ? "pb-[8px]" : "pb-[24px]"
-          }`}
-        >
-          <Input
-            className={`w-[416px] h-[36px] border px-2 rounded ${
-              errors.email && touched.email
-                ? "border-red-500"
-                : "border-gray-300 bg-white"
-            }`}
-            type="email"
-            name="email"
-            value={values.email}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            placeholder="Enter your email address"
-          />
-        </div>
-        <div>
-          {errors.email && touched.email && (
-            <div className="text-red-500 text-sm pb-[24px]">
-              {" "}
-              Invalid email. Use a format like example@email.com
+    <div className="min-h-screen bg-white px-4 py-10">
+      <div className="mx-auto w-full max-w-5xl">
+        <div className="grid items-center gap-10 md:grid-cols-2">
+          <div className="mx-auto w-full max-w-md">
+            <div className="flex items-center gap-2">
+              <Button
+                className="h-9 w-9"
+                variant="outline"
+                size="icon"
+                aria-label="Create account"
+                type="button"
+              >
+                <LoginIcon />
+              </Button>
             </div>
-          )}
-        </div>
 
-        <Button
-          className={`oklch(55.2% 0.016 285.938) w-[416px] h-[36px] text-sm ${
-            !errors.email
-              ? "bg-[#18181B] text-white"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          } `}
-          variant="secondary"
-          onClick={() => {
-            if (!errors.email && values.email) {
-              onNext();
-            }
-          }}
-          disabled={errors.email || !values.email}
-        >
-          Let's Go
-        </Button>
-        <div className="flex flex-row pt-[24px] gap-[5px]">
-          <p className="pl-[85px] text-base">Already have an account?</p>
-         <Link href="/login" className="text-base text-sky-400">
-        Log in
-      </Link>
+            <p className="pt-6 text-2xl">Create your account</p>
+            <p className="pb-6 text-base text-zinc-600">
+              Sign up to explore your favorite dishes.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <Input
+                  className={`h-10 w-full ${
+                    errors.email && touched.email ? "border-red-500" : ""
+                  }`}
+                  type="email"
+                  name="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Enter your email address"
+                />
+                {errors.email && touched.email && (
+                  <div className="pt-2 text-sm text-red-500">
+                    Invalid email. Use a format like example@email.com
+                  </div>
+                )}
+              </div>
+
+              <Button
+                type="button"
+                className={`h-10 w-full text-sm transition-colors ${
+                  isNextDisabled
+                    ? "cursor-not-allowed bg-gray-300 text-gray-500"
+                    : "bg-[#18181B] text-white hover:bg-[#27272A]"
+                }`}
+                variant="secondary"
+                onClick={() => !isNextDisabled && onNext()}
+                disabled={isNextDisabled}
+              >
+                Let&apos;s Go
+              </Button>
+            </div>
+
+            <div className="pt-6 text-center text-sm">
+              <span className="text-zinc-700">Already have an account?</span>{" "}
+              <Link href="/login" className="text-sky-500 underline">
+                Log in
+              </Link>
+            </div>
+          </div>
+
+          <div className="hidden items-center justify-center md:flex">
+            <img
+              src="/bike.png"
+              alt="Delivery rider illustration"
+              className="h-auto w-full max-w-lg"
+            />
+          </div>
         </div>
-      </div>
-      <div className="flex justify-center items-center ">
-        <img src="/bike.png" width={856} height={904} />
       </div>
     </div>
   );
 };
 
 export default SignUpStepOne;
-
-
-
-
-
